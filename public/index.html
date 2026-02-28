@@ -3,344 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sales Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Accolade 4.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f4f3ef; --card:#ffffff; --border:#e2e0d8;
-    --accent:#1a1a2e; --accent2:#e8533a; --accent3:#2d9c6e;
-    --text:#1a1a2e; --muted:#8a8880; --input-bg:#f9f8f5;
-    --shadow:0 2px 12px rgba(26,26,46,0.08);
-    --shadow-lg:0 8px 40px rgba(26,26,46,0.14);
-    --fh:'Plus Jakarta Sans',sans-serif; --fm:'JetBrains Mono',monospace;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;}
+:root {
+  --bg:#0d0d12; --s1:#13131a; --s2:#1a1a24; --s3:#222230;
+  --border:#2a2a3a; --border2:#333345;
+  --accent:#6c63ff; --accent-h:#8b85ff;
+  --red:#ff4d6d; --green:#00c896; --gold:#f4a034; --blue:#3b9eff;
+  --text:#eeeef5; --muted:#7070a0; --dim:#404060;
+  --fh:'Outfit',sans-serif; --fm:'JetBrains Mono',monospace;
+  --r:12px; --r2:8px;
+  --glow:0 0 30px rgba(108,99,255,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;overflow-x:hidden;}
 
-  /* LOGIN */
-  #login-screen{
-    min-height:100vh;display:flex;align-items:center;justify-content:center;
-    padding:24px;background:var(--accent);position:relative;overflow:hidden;
-  }
-  #login-screen::before{
-    content:'';position:absolute;width:600px;height:600px;border-radius:50%;
-    background:radial-gradient(circle,rgba(232,83,58,0.15) 0%,transparent 70%);
-    top:-200px;right:-200px;
-  }
-  #login-screen::after{
-    content:'';position:absolute;width:400px;height:400px;border-radius:50%;
-    background:radial-gradient(circle,rgba(45,156,110,0.1) 0%,transparent 70%);
-    bottom:-150px;left:-100px;
-  }
-  .login-box{
-    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-    border-radius:20px;padding:48px 44px;width:100%;max-width:420px;
-    backdrop-filter:blur(20px);position:relative;z-index:1;
-    animation:riseIn 0.6s cubic-bezier(0.22,1,0.36,1);
-  }
-  .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
-  .login-logo-dot{width:32px;height:32px;background:var(--accent2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
-  .login-logo-text{font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;}
-  .login-box h1{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;}
-  .login-box>p{color:rgba(255,255,255,0.45);font-size:14px;margin-bottom:32px;}
-  .fl{display:flex;flex-direction:column;margin-bottom:16px;}
-  .fl label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:7px;}
-  .login-input{
-    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-    border-radius:10px;color:#fff;font-family:var(--fm);font-size:14px;
-    padding:12px 16px;outline:none;transition:border 0.2s;width:100%;
-  }
-  .login-input:focus{border-color:var(--accent2);}
-  .login-input::placeholder{color:rgba(255,255,255,0.2);}
-  .pw-row{position:relative;}
-  .pw-row .login-input{padding-right:44px;}
-  .eye-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:0;}
-  .eye-btn:hover{color:rgba(255,255,255,0.7);}
-  #login-err{background:rgba(232,83,58,0.15);border:1px solid rgba(232,83,58,0.3);border-radius:8px;color:#f8a090;font-size:13px;padding:10px 14px;margin-bottom:16px;display:none;}
+/* ── GRID BG ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(108,99,255,0.04) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(108,99,255,0.04) 1px,transparent 1px);
+  background-size:48px 48px;
+}
 
-  /* BUTTONS */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:10px;border:none;font-family:var(--fh);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
-  .btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none;}
-  .btn-dark{background:#fff;color:var(--accent);width:100%;padding:13px;font-size:14px;}
-  .btn-dark:hover{background:#f0efeb;}
-  .btn-primary{background:var(--accent);color:#fff;}
-  .btn-primary:hover{background:#2a2a4a;}
-  .btn-red{background:transparent;border:1.5px solid var(--accent2);color:var(--accent2);font-size:12px;padding:7px 14px;}
-  .btn-red:hover{background:var(--accent2);color:#fff;}
-  .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-  .btn-full{width:100%;}
+/* ════════════════ LOGIN ════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  background:var(--bg);
+}
+.login-wrap{
+  width:100%;max-width:400px;
+  animation:riseIn .6s cubic-bezier(.22,1,.36,1);
+}
+.login-brand{
+  text-align:center;margin-bottom:40px;
+}
+.login-brand-name{
+  font-size:32px;font-weight:800;letter-spacing:-.04em;
+  background:linear-gradient(135deg,#fff 30%,var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.login-brand-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.05em;}
 
-  /* APP SHELL */
-  #app{display:none;min-height:100vh;}
-  .topbar{background:var(--accent);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:50;}
-  .topbar-left{display:flex;align-items:center;gap:14px;}
-  .topbar-dot{width:26px;height:26px;background:var(--accent2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;}
-  .topbar-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em;}
-  .topbar-right{display:flex;align-items:center;gap:12px;}
-  .sp-badge{font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 14px;}
-  .logout-btn{background:rgba(232,83,58,0.2);border:1px solid rgba(232,83,58,0.3);color:#f08070;font-family:var(--fh);font-size:12px;font-weight:600;border-radius:8px;padding:6px 14px;cursor:pointer;transition:all 0.2s;}
-  .logout-btn:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.login-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:20px;
+  padding:36px 32px;box-shadow:var(--glow);
+}
+.login-card h2{font-size:20px;font-weight:700;margin-bottom:4px;}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:28px;}
 
-  /* TABS */
-  .tabs{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;display:flex;}
-  .tab{font-family:var(--fh);font-size:13px;font-weight:600;padding:16px 20px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
-  .tab.active{color:var(--accent);border-bottom-color:var(--accent2);}
-  .tab:hover:not(.active){color:var(--text);}
+.fg{display:flex;flex-direction:column;margin-bottom:16px;}
+.fg label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+input,select{
+  background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);
+  color:var(--text);font-family:var(--fh);font-size:14px;padding:11px 14px;
+  outline:none;transition:border .2s,box-shadow .2s;width:100%;
+}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.12);}
+input::placeholder{color:var(--dim);}
+select option{background:var(--s2);}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0;}
 
-  /* CONTENT */
-  .content{padding:32px;max-width:900px;margin:0 auto;}
-  .panel{display:none;animation:riseIn 0.3s ease;}
-  .panel.active{display:block;}
+.err-box{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:var(--r2);color:#ff8fa3;font-size:13px;padding:10px 14px;margin-bottom:16px;display:none;}
 
-  /* CARDS */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow);margin-bottom:24px;}
-  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
-  .card-icon{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-  .card-title{font-size:16px;font-weight:700;letter-spacing:-0.02em;}
-  .card-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+/* ════════════════ BUTTONS ════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);border:none;font-family:var(--fh);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;letter-spacing:.01em;}
+.btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{background:var(--accent-h);transform:translateY(-1px);}
+.btn-full{width:100%;padding:13px;font-size:15px;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text);}
+.btn-red{background:transparent;border:1.5px solid var(--red);color:var(--red);font-size:12px;padding:7px 13px;}
+.btn-red:hover{background:var(--red);color:#fff;}
+.btn-gold{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-size:12px;padding:7px 13px;}
+.btn-gold:hover{background:var(--gold);color:#000;}
+.btn-green{background:var(--green);color:#000;font-size:12px;padding:7px 13px;}
+.btn-green:hover{background:#00e0aa;}
+.btn-blue{background:transparent;border:1.5px solid var(--blue);color:var(--blue);font-size:12px;padding:7px 13px;}
+.btn-blue:hover{background:var(--blue);color:#fff;}
+.btn-sm{font-size:12px;padding:7px 13px;background:var(--s3);border:1px solid var(--border);color:var(--muted);}
+.btn-sm:hover{border-color:var(--accent);color:var(--text);}
 
-  /* FORM */
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
-  .fg{display:flex;flex-direction:column;}
-  .mt{margin-top:16px;}
-  label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;}
-  input,select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 14px;outline:none;transition:border 0.2s,box-shadow 0.2s;width:100%;}
-  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,26,46,0.08);}
-  input::placeholder{color:#c5c3bb;}
+/* ════════════════ APP SHELL ════════════════ */
+#app{display:none;min-height:100vh;position:relative;z-index:1;}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:58px;
+  background:rgba(13,13,18,0.95);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-logo{font-size:16px;font-weight:800;letter-spacing:-.02em;color:#fff;}
+.role-badge{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;
+}
+.role-admin{background:rgba(108,99,255,.2);color:var(--accent-h);border:1px solid rgba(108,99,255,.3);}
+.role-member{background:rgba(0,200,150,.15);color:var(--green);border:1px solid rgba(0,200,150,.25);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.user-chip{font-size:12px;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;}
 
-  .amount-box{background:linear-gradient(135deg,var(--accent3),#1d7a54);border-radius:10px;padding:14px 18px;color:#fff;display:none;align-items:center;justify-content:space-between;margin-top:16px;}
-  .amount-box.show{display:flex;}
-  .amt-lbl{font-size:12px;font-weight:600;opacity:.8;}
-  .amt-val{font-family:var(--fm);font-size:22px;font-weight:500;}
+/* TABS */
+.tabs{display:flex;padding:0 28px;background:var(--s1);border-bottom:1px solid var(--border);}
+.tab{font-family:var(--fh);font-size:13px;font-weight:600;padding:15px 18px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.01em;}
+.tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--text);}
 
-  .pay-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
-  .pay-opt{border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;}
-  .pay-opt:hover{border-color:var(--accent);}
-  .pay-opt.sel{border-color:var(--accent);background:rgba(26,26,46,0.04);}
-  .pay-icon{font-size:20px;}
-  .pay-lbl{font-size:14px;font-weight:600;}
-  .pay-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+/* CONTENT */
+.content{padding:28px;max-width:1080px;margin:0 auto;}
+.panel{display:none;animation:riseIn .3s ease;}
+.panel.active{display:block;}
 
-  #upi-field{display:none;margin-top:16px;}
-  .submit-row{display:flex;justify-content:flex-end;margin-top:24px;}
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.stat-val{font-family:var(--fm);font-size:28px;font-weight:500;color:var(--accent-h);}
+.stat-val.green{color:var(--green);}
+.stat-val.gold{color:var(--gold);}
 
-  /* TABLE */
-  .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .sec-title{font-size:18px;font-weight:700;letter-spacing:-0.02em;}
-  .count-badge{font-family:var(--fm);font-size:12px;color:var(--muted);background:var(--border);border-radius:20px;padding:3px 12px;margin-left:8px;}
-  .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
-  table{width:100%;border-collapse:collapse;}
-  thead th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:13px 18px;text-align:left;background:var(--input-bg);border-bottom:1px solid var(--border);}
-  tbody td{padding:13px 18px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
-  tbody tr:last-child td{border-bottom:none;}
-  tbody tr:hover td{background:rgba(26,26,46,0.02);}
-  .acts{display:flex;gap:8px;}
-  .pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;font-family:var(--fm);}
-  .pill-cash{background:rgba(45,156,110,0.1);color:var(--accent3);}
-  .pill-upi{background:rgba(26,26,46,0.08);color:var(--accent);}
-  .empty-state{text-align:center;padding:56px 24px;color:var(--muted);}
-  .empty-state .ei{font-size:40px;margin-bottom:12px;opacity:.35;}
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:22px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.card-title{font-size:14px;font-weight:700;color:var(--accent-h);text-transform:uppercase;letter-spacing:.07em;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:end;}
+.fg0{display:flex;flex-direction:column;}
+.mt{margin-top:14px;}
 
-  /* MODAL */
-  .overlay{position:fixed;inset:0;background:rgba(26,26,46,0.5);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
-  .overlay.open{opacity:1;pointer-events:all;}
-  .modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);animation:riseIn 0.3s cubic-bezier(0.22,1,0.36,1);}
-  .modal h2{font-size:20px;font-weight:800;letter-spacing:-0.03em;margin-bottom:4px;}
-  .modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
-  .modal-footer{display:flex;gap:10px;margin-top:24px;justify-content:flex-end;}
+/* AMOUNT BOX */
+.amt-box{
+  background:linear-gradient(135deg,rgba(0,200,150,.15),rgba(0,200,150,.05));
+  border:1px solid rgba(0,200,150,.3);border-radius:var(--r2);
+  padding:14px 18px;display:none;align-items:center;justify-content:space-between;margin-top:14px;
+}
+.amt-box.show{display:flex;}
+.amt-lbl{font-size:11px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.07em;}
+.amt-val{font-family:var(--fm);font-size:22px;color:var(--green);font-weight:500;}
 
-  /* TOAST */
-  #toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;display:none;z-index:999;box-shadow:var(--shadow-lg);max-width:360px;line-height:1.5;}
-  .t-ok{background:var(--accent3);color:#fff;}
-  .t-err{background:var(--accent2);color:#fff;}
+/* PAY OPTIONS */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.pay-opt{
+  border:2px solid var(--border);border-radius:var(--r2);padding:14px;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;
+  background:var(--s2);
+}
+.pay-opt:hover{border-color:var(--accent);}
+.pay-opt.sel{border-color:var(--accent);background:rgba(108,99,255,.08);}
+.pay-icon{font-size:20px;}
+.pay-lbl{font-size:14px;font-weight:600;}
+.pay-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+#upi-field{display:none;margin-top:14px;animation:riseIn .2s ease;}
 
-  .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;}
+/* TABLE */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-title{font-size:18px;font-weight:700;letter-spacing:-.02em;}
+.count{font-family:var(--fm);font-size:11px;color:var(--muted);background:var(--s3);border-radius:20px;padding:3px 10px;margin-left:8px;}
+.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 16px;text-align:left;background:var(--s2);border-bottom:1px solid var(--border);}
+tbody td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(42,42,58,.5);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(108,99,255,.04);}
+.acts{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;font-family:var(--fm);}
+.pill-cash{background:rgba(0,200,150,.1);color:var(--green);}
+.pill-upi{background:rgba(59,158,255,.1);color:var(--blue);}
+.pill-admin{background:rgba(108,99,255,.15);color:var(--accent-h);}
+.pill-member{background:rgba(0,200,150,.1);color:var(--green);}
 
-  @keyframes rot{to{transform:rotate(360deg);}}
-  @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty .ei{font-size:36px;margin-bottom:10px;opacity:.3;}
 
-  @media(max-width:640px){
-    .row2,.row3{grid-template-columns:1fr;}
-    .content{padding:20px 16px;}
-    .topbar,.tabs{padding:0 16px;}
-    .modal{padding:24px 20px;}
-    .pay-row{grid-template-columns:1fr;}
-    .login-box{padding:36px 24px;}
-  }
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;width:100%;max-width:480px;box-shadow:var(--glow);animation:riseIn .25s cubic-bezier(.22,1,.36,1);}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+.modal-footer{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;display:none;z-index:999;max-width:360px;line-height:1.5;animation:slideR .3s ease;}
+.t-ok{background:var(--green);color:#000;}
+.t-err{background:var(--red);color:#fff;}
+
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;}
+
+@keyframes rot{to{transform:rotate(360deg);}}
+@keyframes riseIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideR{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+
+@media(max-width:640px){
+  .row2,.row3,.stats-row{grid-template-columns:1fr;}
+  .content{padding:16px;}
+  .topbar,.tabs{padding:0 16px;}
+  .pay-grid{grid-template-columns:1fr;}
+  .modal{padding:22px 18px;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ════════════════ LOGIN ════════════════ -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-dot">⚡</div>
-      <div class="login-logo-text">Sales Portal</div>
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="login-brand-name">Accolade 4.0</div>
+      <div class="login-brand-sub">EVENT MANAGEMENT PORTAL</div>
     </div>
-    <h1>Welcome back</h1>
-    <p>Sign in with your member credentials</p>
-    <div id="login-err"></div>
-    <div class="fl">
-      <label>Email address</label>
-      <input class="login-input" type="email" id="l-email" placeholder="you@example.com">
-    </div>
-    <div class="fl">
-      <label>Password</label>
-      <div class="pw-row">
-        <input class="login-input" type="password" id="l-pw" placeholder="••••••••">
-        <button class="eye-btn" type="button" onclick="toggleEye('l-pw',this)">👁</button>
+    <div class="login-card">
+      <h2>Sign In</h2>
+      <p>Enter your credentials to continue</p>
+      <div id="login-err" class="err-box"></div>
+      <div class="fg">
+        <label>Email</label>
+        <input type="email" id="l-email" placeholder="you@example.com">
       </div>
+      <div class="fg">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="l-pw" placeholder="••••••••">
+          <button class="eye" type="button" onclick="toggleEye('l-pw',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn btn-accent btn-full" type="button" id="login-btn" onclick="doLogin()">Sign In</button>
     </div>
-    <button class="btn btn-dark" type="button" id="login-btn" onclick="doLogin()">Sign In</button>
   </div>
 </div>
 
-<!-- APP -->
+<!-- ════════════════ APP ════════════════ -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-dot">⚡</div>
-      <div class="topbar-title">Sales Portal</div>
+      <div class="topbar-logo">Accolade 4.0</div>
+      <span class="role-badge" id="role-badge">—</span>
     </div>
     <div class="topbar-right">
-      <span class="sp-badge" id="sp-badge">—</span>
-      <button class="logout-btn" type="button" onclick="doLogout()">Sign Out</button>
+      <span class="user-chip" id="user-chip">—</span>
+      <button class="btn btn-sm" type="button" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" type="button" onclick="switchTab('reg',this)">✚ New Registration</button>
-    <button class="tab" type="button" onclick="switchTab('sales',this)">My Sales</button>
-  </div>
+  <div class="tabs" id="tabs-bar"></div>
 
-  <div class="content">
+  <div class="content" id="main-content"></div>
+</div>
 
-    <!-- NEW REGISTRATION -->
-    <div id="panel-reg" class="panel active">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-icon">👤</div>
-          <div><div class="card-title">Student Details</div><div class="card-sub">Enter the student's information</div></div>
-        </div>
-        <div class="row3">
-          <div class="fg"><label>Full Name</label><input type="text" id="r-name" placeholder="Priya Sharma"></div>
-          <div class="fg"><label>Phone Number</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
-          <div class="fg"><label>Email Address</label><input type="email" id="r-email" placeholder="priya@email.com"></div>
+<!-- ════ MODAL: Add / Edit Member ════ -->
+<div class="overlay" id="m-member">
+  <div class="modal">
+    <h2 id="m-member-title">Add Member</h2>
+    <p class="modal-sub" id="m-member-sub">Fill in the details below.</p>
+    <input type="hidden" id="m-member-id">
+    <div class="row2" style="margin-bottom:14px">
+      <div class="fg0"><label>Full Name</label><input type="text" id="m-m-name" placeholder="Rahul Sharma"></div>
+      <div class="fg0"><label>Email</label><input type="email" id="m-m-email" placeholder="rahul@example.com"></div>
+    </div>
+    <div class="row2" style="margin-bottom:14px">
+      <div class="fg0">
+        <label>Password <span id="pw-hint" style="font-size:10px;color:var(--muted)">(leave blank to keep current)</span></label>
+        <div class="pw-wrap">
+          <input type="password" id="m-m-pw" placeholder="Min 8 characters">
+          <button class="eye" type="button" onclick="toggleEye('m-m-pw',this)">👁</button>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-icon">🎪</div>
-          <div><div class="card-title">Event & Payment</div><div class="card-sub">Select event and payment details</div></div>
-        </div>
-
-        <div class="fg">
-          <label>Select Event</label>
-          <select id="r-event" onchange="onEventChange()">
-            <option value="">-- Choose an event --</option>
-          </select>
-        </div>
-
-        <div class="amount-box" id="amount-box">
-          <div><div class="amt-lbl">AMOUNT TO COLLECT</div></div>
-          <div class="amt-val" id="amt-val">₹0</div>
-        </div>
-
-        <div class="mt">
-          <label>Payment Method</label>
-          <div class="pay-row">
-            <div class="pay-opt" id="opt-cash" onclick="selectPay('cash')">
-              <span class="pay-icon">💵</span>
-              <div><div class="pay-lbl">Cash</div><div class="pay-sub">Collected in hand</div></div>
-            </div>
-            <div class="pay-opt" id="opt-upi" onclick="selectPay('upi')">
-              <span class="pay-icon">📱</span>
-              <div><div class="pay-lbl">UPI</div><div class="pay-sub">Online transfer</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="upi-field">
-          <label>UPI Transaction ID</label>
-          <input type="text" id="r-txn" placeholder="e.g. 4238XXXXXX" style="font-family:var(--fm)">
-        </div>
-
-        <div class="submit-row">
-          <button class="btn btn-primary" type="button" id="reg-btn" onclick="submitReg()" style="padding:12px 32px;font-size:14px">
-            Register Student →
-          </button>
-        </div>
+      <div class="fg0">
+        <label>Role</label>
+        <select id="m-m-role">
+          <option value="member">Member</option>
+          <option value="admin">Admin</option>
+        </select>
       </div>
     </div>
-
-    <!-- MY SALES -->
-    <div id="panel-sales" class="panel">
-      <div class="sec-hdr">
-        <div style="display:flex;align-items:center">
-          <span class="sec-title">My Sales</span>
-          <span class="count-badge" id="sales-count">0</span>
-        </div>
-        <button class="btn btn-ghost" type="button" onclick="loadSales()">↺ Refresh</button>
-      </div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Student</th><th>Event</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
-          <tbody id="sales-body">
-            <tr><td colspan="6"><div class="empty-state"><div class="ei">⏳</div><p>Loading...</p></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="closeM('m-member')">Cancel</button>
+      <button class="btn btn-accent" type="button" id="btn-save-member" onclick="saveMember()">Save</button>
     </div>
-
   </div>
 </div>
 
-<!-- MODAL: Edit -->
+<!-- ════ MODAL: Edit Registration ════ -->
 <div class="overlay" id="m-edit">
   <div class="modal">
     <h2>Edit Registration</h2>
     <p class="modal-sub" id="m-edit-sub"></p>
     <input type="hidden" id="m-edit-id">
     <input type="hidden" id="m-edit-stu-id">
-    <div class="row2" style="margin-bottom:16px">
-      <div class="fg"><label>Student Name</label><input type="text" id="m-name"></div>
-      <div class="fg"><label>Phone</label><input type="tel" id="m-phone" maxlength="10"></div>
+    <div class="row2" style="margin-bottom:14px">
+      <div class="fg0"><label>Student Name</label><input type="text" id="m-e-name"></div>
+      <div class="fg0"><label>Phone</label><input type="tel" id="m-e-phone" maxlength="10"></div>
     </div>
-    <div class="fg" style="margin-bottom:16px"><label>Email</label><input type="email" id="m-email"></div>
-    <div class="fg" style="margin-bottom:16px"><label>Event</label><select id="m-event"></select></div>
+    <div class="fg0" style="margin-bottom:14px"><label>Email</label><input type="email" id="m-e-email"></div>
+    <div class="fg0" style="margin-bottom:14px"><label>Event</label><select id="m-e-event"></select></div>
     <div class="row2">
-      <div class="fg">
-        <label>Payment Method</label>
-        <select id="m-pay" onchange="toggleEditUPI()">
+      <div class="fg0">
+        <label>Payment</label>
+        <select id="m-e-pay" onchange="toggleEditUPI()">
           <option value="cash">Cash</option>
           <option value="upi">UPI</option>
         </select>
       </div>
-      <div class="fg" id="m-txn-wrap" style="display:none">
+      <div class="fg0" id="m-e-txn-wrap" style="display:none">
         <label>Transaction ID</label>
-        <input type="text" id="m-txn" placeholder="UPI Txn ID" style="font-family:var(--fm)">
+        <input type="text" id="m-e-txn" style="font-family:var(--fm)">
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeM('m-edit')">Cancel</button>
-      <button class="btn btn-primary" type="button" id="btn-save-edit" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-accent" type="button" id="btn-save-edit" onclick="saveEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Delete -->
+<!-- ════ MODAL: Delete Confirm ════ -->
 <div class="overlay" id="m-del">
   <div class="modal">
-    <h2>Delete Registration</h2>
+    <h2>Confirm Delete</h2>
     <p class="modal-sub" id="m-del-sub"></p>
     <input type="hidden" id="m-del-id">
+    <input type="hidden" id="m-del-type">
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeM('m-del')">Cancel</button>
-      <button class="btn btn-red" type="button" id="btn-del" onclick="confirmDel()">Yes, Delete</button>
+      <button class="btn btn-red" type="button" id="btn-del" onclick="confirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Edit Event Fee ════ -->
+<div class="overlay" id="m-fee">
+  <div class="modal">
+    <h2>Edit Event Fee</h2>
+    <p class="modal-sub" id="m-fee-sub"></p>
+    <input type="hidden" id="m-fee-id">
+    <div class="fg0"><label>New Fee (₹)</label><input type="number" id="m-fee-val" min="1" step="0.01"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="closeM('m-fee')">Cancel</button>
+      <button class="btn btn-accent" type="button" id="btn-save-fee" onclick="saveFee()">Save Fee</button>
     </div>
   </div>
 </div>
@@ -348,21 +353,22 @@
 <div id="toast"></div>
 
 <script>
-// No Supabase here — all API calls go to OUR server which holds the keys
-let session  = null;   // { token, name }
-let events   = [];
-let selPay   = '';
+// ══ STATE ════════════════════════════════════════
+let session   = null;   // { token, name, role }
+let eventsCache = {};   // id → event
+let salesCache  = {};   // id → registration
+let selPay    = '';
 
-// ── UTILS ──────────────────────────────
-
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function fmtDate(ts){ return new Date(ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+// ══ UTILS ════════════════════════════════════════
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function fmtDate(ts){return new Date(ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtMoney(v){return '₹'+parseFloat(v).toFixed(2);}
 
 let _tt;
 function toast(msg,type='ok'){
   const el=document.getElementById('toast');
-  el.textContent=msg; el.className=type==='ok'?'t-ok':'t-err';
-  el.style.display='block'; clearTimeout(_tt);
+  el.textContent=msg;el.className=type==='ok'?'t-ok':'t-err';
+  el.style.display='block';clearTimeout(_tt);
   _tt=setTimeout(()=>el.style.display='none',4500);
 }
 
@@ -373,7 +379,7 @@ function toggleEye(id,btn){
 }
 
 function busy(id,yes,label){
-  const b=document.getElementById(id); b.disabled=yes;
+  const b=document.getElementById(id);b.disabled=yes;
   b.innerHTML=yes?'<span class="spin"></span>':label;
 }
 
@@ -381,29 +387,16 @@ function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-function switchTab(name,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-'+name).classList.add('active');
-  if(name==='sales') loadSales();
-}
-
-// Central API fetch helper — attaches session token automatically
-async function api(method, path, body){
-  const opts = {
-    method,
-    headers: { 'Content-Type':'application/json', 'x-session': session?.token || '' }
-  };
-  if(body) opts.body = JSON.stringify(body);
-  const res = await fetch(path, opts);
-  const json = await res.json();
-  if(!res.ok) throw new Error(json.error || 'Request failed');
+async function api(method,path,body){
+  const opts={method,headers:{'Content-Type':'application/json','x-session':session?.token||''}};
+  if(body) opts.body=JSON.stringify(body);
+  const res=await fetch(path,opts);
+  const json=await res.json();
+  if(!res.ok) throw new Error(json.error||'Request failed');
   return json;
 }
 
-// ── LOGIN ──────────────────────────────
-
+// ══ LOGIN ════════════════════════════════════════
 document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('l-email').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
@@ -412,270 +405,624 @@ async function doLogin(){
   const pw=document.getElementById('l-pw').value;
   const errEl=document.getElementById('login-err');
   errEl.style.display='none';
-
-  if(!email||!pw){showLoginErr('Enter your email and password.'); return;}
-
+  if(!email||!pw){errEl.textContent='Enter email and password.';errEl.style.display='block';return;}
   busy('login-btn',true);
-  try {
-    const data = await api('POST','/api/login',{email,password:pw});
-    session = { token: data.token, name: data.name };
-    document.getElementById('sp-badge').textContent = data.name;
+  try{
+    const data=await api('POST','/api/login',{email,password:pw});
+    session={token:data.token,name:data.name,role:data.role};
+    document.getElementById('user-chip').textContent=data.name;
+    const rb=document.getElementById('role-badge');
+    rb.textContent=data.role.toUpperCase();
+    rb.className='role-badge '+(data.role==='admin'?'role-admin':'role-member');
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     await loadEventsCache();
-    // switch to reg tab
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    document.querySelector('.tab').classList.add('active');
-    document.getElementById('panel-reg').classList.add('active');
-  } catch(e){
-    showLoginErr(e.message);
+    buildDashboard();
+  }catch(e){
+    errEl.textContent=e.message;errEl.style.display='block';
   }
   busy('login-btn',false,'Sign In');
 }
 
-function showLoginErr(msg){
-  const el=document.getElementById('login-err');
-  el.textContent=msg; el.style.display='block';
-}
-
 async function doLogout(){
-  try{ await api('POST','/api/logout'); } catch(e){}
-  session=null; selPay='';
+  try{await api('POST','/api/logout');}catch(e){}
+  session=null;selPay='';eventsCache={};salesCache={};
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('l-email').value='';
   document.getElementById('l-pw').value='';
   document.getElementById('login-err').style.display='none';
-  clearRegForm();
+  document.getElementById('tabs-bar').innerHTML='';
+  document.getElementById('main-content').innerHTML='';
 }
 
-// ── EVENTS CACHE ───────────────────────
+// ══ BUILD DASHBOARD BY ROLE ══════════════════════
+function buildDashboard(){
+  if(session.role==='admin') buildAdmin();
+  else buildMember();
+}
 
+// ════════════════════════════════════════════════════
+//  ADMIN DASHBOARD
+// ════════════════════════════════════════════════════
+function buildAdmin(){
+  document.getElementById('tabs-bar').innerHTML=`
+    <button class="tab active" type="button" onclick="switchTab('overview',this)">📊 Overview</button>
+    <button class="tab" type="button" onclick="switchTab('registrations',this)">📋 All Registrations</button>
+    <button class="tab" type="button" onclick="switchTab('members',this)">👥 Members</button>
+    <button class="tab" type="button" onclick="switchTab('events',this)">🎪 Events</button>
+    <button class="tab" type="button" onclick="switchTab('register',this)">✚ New Registration</button>
+  `;
+  document.getElementById('main-content').innerHTML=`
+    <div id="panel-overview"       class="panel active">${adminOverviewHTML()}</div>
+    <div id="panel-registrations"  class="panel">${salesTableHTML(true)}</div>
+    <div id="panel-members"        class="panel">${membersHTML()}</div>
+    <div id="panel-events"         class="panel">${eventsHTML()}</div>
+    <div id="panel-register"       class="panel">${registerHTML()}</div>
+  `;
+  loadAdminOverview();
+  loadMembers();
+  loadEventsTable();
+  buildEventDropdowns();
+  initRegisterForm();
+}
+
+function adminOverviewHTML(){return `
+  <div id="admin-stats" class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total Registrations</div><div class="stat-val" id="st-regs">—</div></div>
+    <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-val green" id="st-rev">—</div></div>
+    <div class="stat-card"><div class="stat-label">Active Members</div><div class="stat-val gold" id="st-mem">—</div></div>
+    <div class="stat-card"><div class="stat-label">Events</div><div class="stat-val" id="st-evs">—</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">Recent Registrations</div></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th></tr></thead>
+      <tbody id="recent-tbody"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+    </table></div>
+  </div>
+`;}
+
+async function loadAdminOverview(){
+  try{
+    const [sales,members,events]=await Promise.all([
+      api('GET','/api/sales'),
+      api('GET','/api/members'),
+      api('GET','/api/events')
+    ]);
+    const totalRev=sales.reduce((s,r)=>s+parseFloat(r.amount_paid),0);
+    document.getElementById('st-regs').textContent=sales.length;
+    document.getElementById('st-rev').textContent=fmtMoney(totalRev);
+    document.getElementById('st-mem').textContent=members.length;
+    document.getElementById('st-evs').textContent=events.length;
+    renderRecentSales(sales.slice(0,10));
+  }catch(e){toast(e.message,'err');}
+}
+
+function renderRecentSales(data){
+  const tbody=document.getElementById('recent-tbody');
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>';return;}
+  const rows=data.map(r=>{
+    const tr=document.createElement('tr');
+    const pillClass=r.payment_method==='cash'?'pill-cash':'pill-upi';
+    const pillText=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
+    tr.innerHTML=`
+      <td><div class="sname"></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm)" class="sphone"></div></td>
+      <td class="evtitle"></td>
+      <td style="color:var(--muted)" class="mname"></td>
+      <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
+      <td><span class="pill ${pillClass}">${pillText}</span></td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>`;
+    tr.querySelector('.sname').textContent=r.Students.name;
+    tr.querySelector('.sphone').textContent=r.Students.phone_number;
+    tr.querySelector('.evtitle').textContent=r.Events.title;
+    tr.querySelector('.mname').textContent=r.Members?r.Members.name:'—';
+    return tr;
+  });
+  tbody.innerHTML='';
+  rows.forEach(tr=>tbody.appendChild(tr));
+}
+
+// ════════════════════════════════════════════════════
+//  MEMBERS PANEL (admin)
+// ════════════════════════════════════════════════════
+function membersHTML(){return `
+  <div class="sec-hdr">
+    <div style="display:flex;align-items:center"><span class="sec-title">Members</span><span class="count" id="mem-count">0</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" type="button" onclick="loadMembers()">↺ Refresh</button>
+      <button class="btn btn-accent" type="button" onclick="openAddMember()">+ Add Member</button>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
+    <tbody id="mem-tbody"><tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>
+`;}
+
+async function loadMembers(){
+  const tbody=document.getElementById('mem-tbody');
+  if(!tbody)return;
+  tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr>';
+  try{
+    const data=await api('GET','/api/members');
+    const cnt=document.getElementById('mem-count');
+    if(cnt)cnt.textContent=data.length;
+    if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">👥</div><p>No members yet.</p></div></td></tr>';return;}
+    const rows=data.map(m=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><strong class="mname"></strong></td>
+        <td style="color:var(--muted)" class="memail"></td>
+        <td><span class="pill ${m.role==='admin'?'pill-admin':'pill-member'}">${m.role}</span></td>
+        <td style="color:var(--muted);font-size:12px">${fmtDate(m.created_at)}</td>
+        <td><div class="acts">
+          <button class="btn btn-blue" type="button" data-id="${esc(m.id)}" data-action="edit-member">Edit</button>
+          <button class="btn btn-red"  type="button" data-id="${esc(m.id)}" data-name="" data-action="del-member">Delete</button>
+        </div></td>`;
+      tr.querySelector('.mname').textContent=m.name;
+      tr.querySelector('.memail').textContent=m.email;
+      tr.querySelector('[data-action="del-member"]').dataset.name=m.name;
+      tr.querySelector('[data-action="edit-member"]').addEventListener('click',()=>openEditMember(m));
+      tr.querySelector('[data-action="del-member"]').addEventListener('click',()=>openDel(m.id,'member','member "'+m.name+'"'));
+      return tr;
+    });
+    tbody.innerHTML='';
+    rows.forEach(tr=>tbody.appendChild(tr));
+  }catch(e){toast(e.message,'err');}
+}
+
+function openAddMember(){
+  document.getElementById('m-member-title').textContent='Add Member';
+  document.getElementById('m-member-sub').textContent='Create a new member account.';
+  document.getElementById('m-member-id').value='';
+  document.getElementById('m-m-name').value='';
+  document.getElementById('m-m-email').value='';
+  document.getElementById('m-m-pw').value='';
+  document.getElementById('m-m-role').value='member';
+  document.getElementById('pw-hint').style.display='none';
+  openM('m-member');
+}
+
+function openEditMember(m){
+  document.getElementById('m-member-title').textContent='Edit Member';
+  document.getElementById('m-member-sub').textContent='Update details for '+m.name+'.';
+  document.getElementById('m-member-id').value=m.id;
+  document.getElementById('m-m-name').value=m.name;
+  document.getElementById('m-m-email').value=m.email;
+  document.getElementById('m-m-pw').value='';
+  document.getElementById('m-m-role').value=m.role;
+  document.getElementById('pw-hint').style.display='inline';
+  openM('m-member');
+}
+
+async function saveMember(){
+  const id    =document.getElementById('m-member-id').value;
+  const name  =document.getElementById('m-m-name').value.trim();
+  const email =document.getElementById('m-m-email').value.trim();
+  const pw    =document.getElementById('m-m-pw').value;
+  const role  =document.getElementById('m-m-role').value;
+
+  if(!name){toast('Enter a name.','err');return;}
+  if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
+  if(!id && pw.length<8){toast('Password must be at least 8 characters.','err');return;}
+  if(id && pw && pw.length<8){toast('Password must be at least 8 characters.','err');return;}
+
+  busy('btn-save-member',true);
+  try{
+    const body={name,email,role};
+    if(pw) body.password=pw;
+    if(id) await api('PUT','/api/members/'+id,body);
+    else   await api('POST','/api/members',{...body,password:pw});
+    toast(id?'✓ Member updated.':'✓ Member created.');
+    closeM('m-member');
+    loadMembers();
+  }catch(e){toast(e.message,'err');}
+  busy('btn-save-member',false,'Save');
+}
+
+// ════════════════════════════════════════════════════
+//  EVENTS PANEL (admin)
+// ════════════════════════════════════════════════════
+function eventsHTML(){return `
+  <div class="card">
+    <div class="card-head"><div class="card-title">Add New Event</div></div>
+    <div class="row2">
+      <div class="fg0"><label>Event Title</label><input type="text" id="ev-title" placeholder="Dance Competition"></div>
+      <div class="fg0"><label>Registration Fee (₹)</label><input type="number" id="ev-cost" placeholder="199" min="1" step="0.01"></div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-accent" type="button" id="btn-add-ev" onclick="addEvent()">Add Event</button>
+    </div>
+  </div>
+  <div class="sec-hdr">
+    <div style="display:flex;align-items:center"><span class="sec-title">All Events</span><span class="count" id="ev-count">0</span></div>
+    <button class="btn btn-sm" type="button" onclick="loadEventsTable()">↺ Refresh</button>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Title</th><th>Fee</th><th>Created</th><th>Actions</th></tr></thead>
+    <tbody id="ev-tbody"><tr><td colspan="4"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>
+`;}
+
+async function loadEventsTable(){
+  const tbody=document.getElementById('ev-tbody');
+  if(!tbody)return;
+  try{
+    const data=await api('GET','/api/events');
+    const cnt=document.getElementById('ev-count');
+    if(cnt)cnt.textContent=data.length;
+    if(!data.length){tbody.innerHTML='<tr><td colspan="4"><div class="empty"><div class="ei">🎪</div><p>No events yet.</p></div></td></tr>';return;}
+    const rows=data.map(ev=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><strong class="evname"></strong></td>
+        <td style="font-family:var(--fm);font-weight:500">${fmtMoney(ev.cost)}</td>
+        <td style="color:var(--muted);font-size:12px">${fmtDate(ev.created_at)}</td>
+        <td><div class="acts">
+          <button class="btn btn-gold" type="button" data-action="edit-fee">Edit Fee</button>
+          <button class="btn btn-red"  type="button" data-action="del-ev">Delete</button>
+        </div></td>`;
+      tr.querySelector('.evname').textContent=ev.title;
+      tr.querySelector('[data-action="edit-fee"]').addEventListener('click',()=>openFee(ev.id,ev.title,ev.cost));
+      tr.querySelector('[data-action="del-ev"]').addEventListener('click',()=>openDel(ev.id,'event','event "'+ev.title+'"'));
+      return tr;
+    });
+    tbody.innerHTML='';
+    rows.forEach(tr=>tbody.appendChild(tr));
+  }catch(e){toast(e.message,'err');}
+}
+
+async function addEvent(){
+  const title=document.getElementById('ev-title').value.trim();
+  const cost=parseFloat(document.getElementById('ev-cost').value);
+  if(!title){toast('Enter event title.','err');return;}
+  if(isNaN(cost)||cost<=0){toast('Enter a valid fee.','err');return;}
+  busy('btn-add-ev',true);
+  try{
+    await api('POST','/api/events',{title,cost});
+    toast('✓ Event added.');
+    document.getElementById('ev-title').value='';
+    document.getElementById('ev-cost').value='';
+    loadEventsTable();
+    await loadEventsCache();
+    buildEventDropdowns();
+  }catch(e){toast(e.message,'err');}
+  busy('btn-add-ev',false,'Add Event');
+}
+
+function openFee(id,title,cur){
+  document.getElementById('m-fee-id').value=id;
+  document.getElementById('m-fee-sub').textContent='Current fee for "'+title+'" is '+fmtMoney(cur)+'.';
+  document.getElementById('m-fee-val').value=cur;
+  openM('m-fee');
+}
+
+async function saveFee(){
+  const id=document.getElementById('m-fee-id').value;
+  const cost=parseFloat(document.getElementById('m-fee-val').value);
+  if(isNaN(cost)||cost<=0){toast('Enter a valid fee.','err');return;}
+  busy('btn-save-fee',true);
+  try{
+    await api('PUT','/api/events/'+id,{cost});
+    toast('✓ Fee updated.');
+    closeM('m-fee');
+    loadEventsTable();
+    await loadEventsCache();
+    buildEventDropdowns();
+  }catch(e){toast(e.message,'err');}
+  busy('btn-save-fee',false,'Save Fee');
+}
+
+// ════════════════════════════════════════════════════
+//  ALL REGISTRATIONS (admin)
+// ════════════════════════════════════════════════════
+function salesTableHTML(isAdmin){
+  const cols=isAdmin
+    ?'<th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>'
+    :'<th>Student</th><th>Event</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>';
+  const colspan=isAdmin?7:6;
+  return `
+  <div class="sec-hdr">
+    <div style="display:flex;align-items:center">
+      <span class="sec-title">${isAdmin?'All Registrations':'My Sales'}</span>
+      <span class="count" id="sales-count">0</span>
+    </div>
+    <button class="btn btn-sm" type="button" onclick="loadSales()">↺ Refresh</button>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr>${cols}</tr></thead>
+    <tbody id="sales-tbody"><tr><td colspan="${colspan}"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>`;}
+
+async function loadSales(){
+  const tbody=document.getElementById('sales-tbody');
+  if(!tbody)return;
+  tbody.innerHTML=`<tr><td colspan="${session.role==='admin'?7:6}"><div class="empty"><div class="ei">⏳</div></div></td></tr>`;
+  const isAdmin=session.role==='admin';
+  try{
+    const data=await api('GET','/api/sales');
+    salesCache={};
+    data.forEach(r=>salesCache[r.id]=r);
+    const cnt=document.getElementById('sales-count');
+    if(cnt)cnt.textContent=data.length;
+    if(!data.length){
+      tbody.innerHTML=`<tr><td colspan="${isAdmin?7:6}"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>`;
+      return;
+    }
+    const rows=data.map(r=>{
+      const tr=document.createElement('tr');
+      const pillClass=r.payment_method==='cash'?'pill-cash':'pill-upi';
+      const pillText=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
+      const memberCell=isAdmin?`<td style="color:var(--muted)" class="mname"></td>`:'';
+      tr.innerHTML=`
+        <td><div style="font-weight:600" class="sname"></div>
+            <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:2px" class="sphone"></div></td>
+        <td style="font-weight:500" class="evtitle"></td>
+        ${memberCell}
+        <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
+        <td><span class="pill ${pillClass}">${pillText}</span>
+            ${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
+        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>
+        <td><div class="acts">
+          <button class="btn btn-blue" type="button" data-id="${r.id}" data-action="edit-reg">Edit</button>
+          <button class="btn btn-red"  type="button" data-id="${r.id}" data-action="del-reg">Delete</button>
+        </div></td>`;
+      tr.querySelector('.sname').textContent=r.Students.name;
+      tr.querySelector('.sphone').textContent=r.Students.phone_number;
+      tr.querySelector('.evtitle').textContent=r.Events.title;
+      if(isAdmin&&r.Members) tr.querySelector('.mname').textContent=r.Members.name;
+      if(r.transaction_id) tr.querySelector('.txn').textContent=r.transaction_id;
+      tr.querySelector('[data-action="edit-reg"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
+      tr.querySelector('[data-action="del-reg"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
+      return tr;
+    });
+    tbody.innerHTML='';
+    rows.forEach(tr=>tbody.appendChild(tr));
+  }catch(e){toast(e.message,'err');}
+}
+
+// ════════════════════════════════════════════════════
+//  MEMBER DASHBOARD
+// ════════════════════════════════════════════════════
+function buildMember(){
+  document.getElementById('tabs-bar').innerHTML=`
+    <button class="tab active" type="button" onclick="switchTab('register',this)">✚ New Registration</button>
+    <button class="tab" type="button" onclick="switchTab('sales',this)">📋 My Sales</button>
+  `;
+  document.getElementById('main-content').innerHTML=`
+    <div id="panel-register" class="panel active">${registerHTML()}</div>
+    <div id="panel-sales"    class="panel">${salesTableHTML(false)}</div>
+  `;
+  buildEventDropdowns();
+  initRegisterForm();
+}
+
+// ════════════════════════════════════════════════════
+//  NEW REGISTRATION FORM (shared)
+// ════════════════════════════════════════════════════
+function registerHTML(){return `
+  <div class="card">
+    <div class="card-head"><div class="card-title">Student Details</div></div>
+    <div class="row3">
+      <div class="fg0"><label>Full Name</label><input type="text" id="r-name" placeholder="Priya Sharma"></div>
+      <div class="fg0"><label>Phone Number</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
+      <div class="fg0"><label>Email</label><input type="email" id="r-email" placeholder="priya@email.com"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">Event & Payment</div></div>
+    <div class="fg0"><label>Select Event</label>
+      <select id="r-event" onchange="onEventChange()">
+        <option value="">-- Choose an event --</option>
+      </select>
+    </div>
+    <div class="amt-box" id="amt-box">
+      <div><div class="amt-lbl">Amount to Collect</div></div>
+      <div class="amt-val" id="amt-val">₹0</div>
+    </div>
+    <div class="mt"><label>Payment Method</label>
+      <div class="pay-grid">
+        <div class="pay-opt" id="opt-cash" onclick="selectPay('cash')">
+          <span class="pay-icon">💵</span>
+          <div><div class="pay-lbl">Cash</div><div class="pay-sub">Collected in hand</div></div>
+        </div>
+        <div class="pay-opt" id="opt-upi" onclick="selectPay('upi')">
+          <span class="pay-icon">📱</span>
+          <div><div class="pay-lbl">UPI</div><div class="pay-sub">Online transfer</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="upi-field"><label>UPI Transaction ID</label>
+      <input type="text" id="r-txn" placeholder="e.g. 4238XXXXXX" style="font-family:var(--fm)">
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:22px">
+      <button class="btn btn-accent" type="button" id="reg-btn" onclick="submitReg()" style="padding:12px 32px;font-size:14px">
+        Register Student →
+      </button>
+    </div>
+  </div>
+`;}
+
+function initRegisterForm(){
+  buildEventDropdowns();
+  selPay='';
+}
+
+// ════════════════════════════════════════════════════
+//  EVENTS CACHE & DROPDOWNS
+// ════════════════════════════════════════════════════
 async function loadEventsCache(){
-  try {
-    events = await api('GET','/api/events');
-    const sel = document.getElementById('r-event');
+  try{
+    const data=await api('GET','/api/events');
+    eventsCache={};
+    data.forEach(ev=>eventsCache[ev.id]=ev);
+  }catch(e){console.error('events cache',e);}
+}
+
+function buildEventDropdowns(){
+  const events=Object.values(eventsCache);
+  // main register dropdown
+  const sel=document.getElementById('r-event');
+  if(sel){
     sel.innerHTML='<option value="">-- Choose an event --</option>';
-    events.forEach(ev=>{
-      sel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;
-    });
-    const msel=document.getElementById('m-event');
+    events.forEach(ev=>{sel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;});
+  }
+  // edit modal dropdown
+  const msel=document.getElementById('m-e-event');
+  if(msel){
     msel.innerHTML='';
-    events.forEach(ev=>{
-      msel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;
-    });
-  } catch(e){ toast('Failed to load events: '+e.message,'err'); }
+    events.forEach(ev=>{msel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;});
+  }
 }
 
 function onEventChange(){
   const sel=document.getElementById('r-event');
-  const opt=sel.options[sel.selectedIndex];
-  const box=document.getElementById('amount-box');
-  if(sel.value&&opt.dataset.cost){
-    document.getElementById('amt-val').textContent='₹'+parseFloat(opt.dataset.cost).toFixed(2);
+  const opt=sel?.options[sel.selectedIndex];
+  const box=document.getElementById('amt-box');
+  if(sel?.value&&opt?.dataset.cost){
+    document.getElementById('amt-val').textContent=fmtMoney(opt.dataset.cost);
     box.classList.add('show');
-  } else { box.classList.remove('show'); }
+  }else{box?.classList.remove('show');}
 }
-
-// ── PAYMENT ────────────────────────────
 
 function selectPay(m){
   selPay=m;
-  document.getElementById('opt-cash').classList.toggle('sel',m==='cash');
-  document.getElementById('opt-upi').classList.toggle('sel',m==='upi');
-  document.getElementById('upi-field').style.display=m==='upi'?'block':'none';
-  if(m!=='upi') document.getElementById('r-txn').value='';
+  document.getElementById('opt-cash')?.classList.toggle('sel',m==='cash');
+  document.getElementById('opt-upi')?.classList.toggle('sel',m==='upi');
+  const uf=document.getElementById('upi-field');
+  if(uf) uf.style.display=m==='upi'?'block':'none';
+  if(m!=='upi'){const t=document.getElementById('r-txn');if(t)t.value='';}
 }
-
-function toggleEditUPI(){
-  const v=document.getElementById('m-pay').value;
-  const wrap=document.getElementById('m-txn-wrap');
-  wrap.style.display=v==='upi'?'flex':'none';
-  wrap.style.flexDirection='column';
-  if(v!=='upi') document.getElementById('m-txn').value='';
-}
-
-// ── REGISTER ───────────────────────────
 
 async function submitReg(){
-  const name =document.getElementById('r-name').value.trim();
-  const phone=document.getElementById('r-phone').value.trim();
-  const email=document.getElementById('r-email').value.trim();
-  const evId =document.getElementById('r-event').value;
-  const txn  =document.getElementById('r-txn').value.trim();
+  const name =document.getElementById('r-name')?.value.trim();
+  const phone=document.getElementById('r-phone')?.value.trim();
+  const email=document.getElementById('r-email')?.value.trim();
+  const evId =document.getElementById('r-event')?.value;
+  const txn  =document.getElementById('r-txn')?.value.trim();
 
-  if(!name)                          {toast('Enter student name.','err');return;}
-  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone number.','err');return;}
-  if(!email||!email.includes('@'))   {toast('Enter a valid email.','err');return;}
-  if(!evId)                          {toast('Select an event.','err');return;}
-  if(!selPay)                        {toast('Select a payment method.','err');return;}
-  if(selPay==='upi'&&!txn)           {toast('Enter the UPI transaction ID.','err');return;}
+  if(!name){toast('Enter student name.','err');return;}
+  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter valid 10-digit phone.','err');return;}
+  if(!email||!email.includes('@')){toast('Enter valid email.','err');return;}
+  if(!evId){toast('Select an event.','err');return;}
+  if(!selPay){toast('Select a payment method.','err');return;}
+  if(selPay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
 
   busy('reg-btn',true);
-  try {
-    await api('POST','/api/register',{ name,phone,email,event_id:evId,payment_method:selPay,transaction_id:txn||null });
-    toast('✓ Student registered successfully!');
+  try{
+    await api('POST','/api/register',{name,phone,email,event_id:evId,payment_method:selPay,transaction_id:txn||null});
+    toast('✓ Student registered!');
     clearRegForm();
-  } catch(e){ toast(e.message,'err'); }
+  }catch(e){toast(e.message,'err');}
   busy('reg-btn',false,'Register Student →');
 }
 
 function clearRegForm(){
   ['r-name','r-phone','r-email','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('r-event').value='';
-  document.getElementById('amount-box').classList.remove('show');
-  document.getElementById('upi-field').style.display='none';
-  document.getElementById('opt-cash').classList.remove('sel');
-  document.getElementById('opt-upi').classList.remove('sel');
+  const re=document.getElementById('r-event');if(re)re.value='';
+  document.getElementById('amt-box')?.classList.remove('show');
+  const uf=document.getElementById('upi-field');if(uf)uf.style.display='none';
+  document.getElementById('opt-cash')?.classList.remove('sel');
+  document.getElementById('opt-upi')?.classList.remove('sel');
   selPay='';
 }
 
-// ── MY SALES ───────────────────────────
-
-
-// ── MY SALES ───────────────────────────
-// salesCache stores the raw data keyed by registration id
-// so we never put raw data into onclick attributes (XSS fix)
-let salesCache = {};
-
-async function loadSales(){
-  const tbody=document.getElementById('sales-body');
-  tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ei">⏳</div><p>Loading...</p></div></td></tr>';
-  try {
-    const data=await api('GET','/api/sales');
-    salesCache = {};
-    data.forEach(r => salesCache[r.id] = r);   // store data in memory, NOT in DOM
-
-    document.getElementById('sales-count').textContent=data.length;
-    if(!data.length){
-      tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>';
-      return;
-    }
-
-    const rows = data.map(r => {
-      const tr = document.createElement('tr');
-      // payment pill — safe because we only use two known values
-      const pillClass = r.payment_method === 'cash' ? 'pill-cash' : 'pill-upi';
-      const pillText  = r.payment_method === 'cash' ? '💵 Cash'   : '📱 UPI';
-
-      tr.innerHTML = `
-        <td>
-          <div style="font-weight:600"></div>
-          <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:2px"></div>
-        </td>
-        <td style="font-weight:500"></td>
-        <td style="font-family:var(--fm);font-weight:600">₹${parseFloat(r.amount_paid).toFixed(2)}</td>
-        <td>
-          <span class="pill ${pillClass}">${pillText}</span>
-          ${r.transaction_id ? '<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn-id"></div>' : ''}
-        </td>
-        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>
-        <td>
-          <div class="acts">
-            <button class="btn btn-ghost" type="button" data-id="${r.id}" data-action="edit">Edit</button>
-            <button class="btn btn-red"   type="button" data-id="${r.id}" data-action="del">Delete</button>
-          </div>
-        </td>`;
-
-      // Use textContent to safely set user data — never innerHTML for user data
-      tr.querySelector('td:nth-child(1) div:nth-child(1)').textContent = r.Students.name;
-      tr.querySelector('td:nth-child(1) div:nth-child(2)').textContent = r.Students.phone_number;
-      tr.querySelector('td:nth-child(2)').textContent = r.Events.title;
-      if (r.transaction_id) tr.querySelector('.txn-id').textContent = r.transaction_id;
-
-      return tr;
-    });
-
-    tbody.innerHTML = '';
-    rows.forEach(tr => tbody.appendChild(tr));
-
-    // Attach click handlers via JS, not onclick attributes
-    tbody.querySelectorAll('button[data-action="edit"]').forEach(btn => {
-      btn.addEventListener('click', () => openEdit(salesCache[btn.dataset.id]));
-    });
-    tbody.querySelectorAll('button[data-action="del"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const r = salesCache[btn.dataset.id];
-        openDel(r.id, r.Students.name, r.Events.title);
-      });
-    });
-
-  } catch(e){ toast(e.message,'err'); }
-}
-
-// ── EDIT ───────────────────────────────
-
-function openEdit(r){
-  document.getElementById('m-edit-id').value     = r.id;
-  document.getElementById('m-edit-stu-id').value = r.Students.id;
-  document.getElementById('m-name').value        = r.Students.name;
-  document.getElementById('m-phone').value       = r.Students.phone_number;
-  document.getElementById('m-email').value       = r.Students.email;
-  document.getElementById('m-pay').value         = r.payment_method;
-  document.getElementById('m-txn').value         = r.transaction_id || '';
-
-  // Safe: set subtitle with textContent
-  document.getElementById('m-edit-sub').textContent = 'Editing registration for ' + r.Students.name;
-
-  const msel=document.getElementById('m-event');
-  for(let i=0;i<msel.options.length;i++){
-    if(msel.options[i].value===r.Events.id){ msel.selectedIndex=i; break; }
-  }
+// ════════════════════════════════════════════════════
+//  EDIT REGISTRATION
+// ════════════════════════════════════════════════════
+function openEditReg(r){
+  document.getElementById('m-edit-id').value=r.id;
+  document.getElementById('m-edit-stu-id').value=r.Students.id;
+  document.getElementById('m-e-name').value=r.Students.name;
+  document.getElementById('m-e-phone').value=r.Students.phone_number;
+  document.getElementById('m-e-email').value=r.Students.email;
+  document.getElementById('m-e-pay').value=r.payment_method;
+  document.getElementById('m-e-txn').value=r.transaction_id||'';
+  document.getElementById('m-edit-sub').textContent='Editing registration for '+r.Students.name;
+  const msel=document.getElementById('m-e-event');
+  for(let i=0;i<msel.options.length;i++){if(msel.options[i].value===r.Events.id){msel.selectedIndex=i;break;}}
   toggleEditUPI();
   openM('m-edit');
 }
 
-async function saveEdit(){
-  const regId = document.getElementById('m-edit-id').value;
-  const stuId = document.getElementById('m-edit-stu-id').value;
-  const name  = document.getElementById('m-name').value.trim();
-  const phone = document.getElementById('m-phone').value.trim();
-  const email = document.getElementById('m-email').value.trim();
-  const evId  = document.getElementById('m-event').value;
-  const pay   = document.getElementById('m-pay').value;
-  const txn   = document.getElementById('m-txn').value.trim();
+function toggleEditUPI(){
+  const v=document.getElementById('m-e-pay')?.value;
+  const wrap=document.getElementById('m-e-txn-wrap');
+  if(wrap){wrap.style.display=v==='upi'?'flex':'none';wrap.style.flexDirection='column';}
+  if(v!=='upi'){const t=document.getElementById('m-e-txn');if(t)t.value='';}
+}
 
-  if(!name)               {toast('Enter a name.','err');return;}
-  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter 10-digit phone.','err');return;}
+async function saveEdit(){
+  const regId=document.getElementById('m-edit-id').value;
+  const stuId=document.getElementById('m-edit-stu-id').value;
+  const name=document.getElementById('m-e-name').value.trim();
+  const phone=document.getElementById('m-e-phone').value.trim();
+  const email=document.getElementById('m-e-email').value.trim();
+  const evId=document.getElementById('m-e-event').value;
+  const pay=document.getElementById('m-e-pay').value;
+  const txn=document.getElementById('m-e-txn').value.trim();
+
+  if(!name){toast('Enter name.','err');return;}
+  if(!phone||phone.length!==10){toast('Enter 10-digit phone.','err');return;}
   if(!email||!email.includes('@')){toast('Enter valid email.','err');return;}
-  if(pay==='upi'&&!txn)   {toast('Enter UPI transaction ID.','err');return;}
+  if(pay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
 
   busy('btn-save-edit',true);
-  try {
-    await api('PUT','/api/sales/'+regId,{
-      student_id:stuId, name, phone, email,
-      event_id:evId, payment_method:pay,
-      transaction_id:txn||null
-    });
+  try{
+    await api('PUT','/api/sales/'+regId,{student_id:stuId,name,phone,email,event_id:evId,payment_method:pay,transaction_id:txn||null});
     toast('✓ Registration updated.');
     closeM('m-edit');
     loadSales();
-  } catch(e){ toast(e.message,'err'); }
+    if(session.role==='admin') loadAdminOverview();
+  }catch(e){toast(e.message,'err');}
   busy('btn-save-edit',false,'Save Changes');
 }
 
-// ── DELETE ─────────────────────────────
-
-function openDel(id, sName, evTitle){
-  document.getElementById('m-del-id').value = id;
-  // Safe: textContent, not innerHTML
-  document.getElementById('m-del-sub').textContent =
-    'Delete ' + sName + '\'s registration for "' + evTitle + '"?';
+// ════════════════════════════════════════════════════
+//  UNIVERSAL DELETE
+// ════════════════════════════════════════════════════
+function openDel(id,type,label){
+  document.getElementById('m-del-id').value=id;
+  document.getElementById('m-del-type').value=type;
+  document.getElementById('m-del-sub').textContent='Are you sure you want to delete '+label+'?';
   openM('m-del');
 }
 
 async function confirmDel(){
   const id=document.getElementById('m-del-id').value;
+  const type=document.getElementById('m-del-type').value;
   busy('btn-del',true);
-  try {
-    await api('DELETE','/api/sales/'+id);
-    delete salesCache[id];
-    toast('Registration deleted.');
+  try{
+    if(type==='registration') await api('DELETE','/api/sales/'+id);
+    else if(type==='member')  await api('DELETE','/api/members/'+id);
+    else if(type==='event')   await api('DELETE','/api/events/'+id);
+    toast('Deleted successfully.');
     closeM('m-del');
-    loadSales();
-  } catch(e){ toast(e.message,'err'); }
-  busy('btn-del',false,'Yes, Delete');
+    if(type==='registration'){ loadSales(); if(session.role==='admin')loadAdminOverview(); }
+    if(type==='member')  loadMembers();
+    if(type==='event'){  loadEventsTable(); await loadEventsCache(); buildEventDropdowns(); }
+  }catch(e){toast(e.message,'err');}
+  busy('btn-del',true,'Delete');
+  busy('btn-del',false,'Delete');
+}
+
+// ════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ════════════════════════════════════════════════════
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const panel=document.getElementById('panel-'+name);
+  if(panel) panel.classList.add('active');
+  // lazy load on tab switch
+  if(name==='sales'||name==='registrations') loadSales();
+  if(name==='members')  loadMembers();
+  if(name==='events')   loadEventsTable();
+  if(name==='overview') loadAdminOverview();
+  if(name==='register') buildEventDropdowns();
 }
 </script>
 </body>
