@@ -7,71 +7,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0d0d12; --s1:#13131a; --s2:#1a1a24; --s3:#222230;
-  --border:#2a2a3a; --border2:#333345;
-  --accent:#6c63ff; --accent-h:#8b85ff;
-  --red:#ff4d6d; --green:#00c896; --gold:#f4a034; --blue:#3b9eff;
-  --text:#eeeef5; --muted:#7070a0; --dim:#404060;
-  --fh:'Outfit',sans-serif; --fm:'JetBrains Mono',monospace;
-  --r:12px; --r2:8px;
-  --glow:0 0 30px rgba(108,99,255,0.15);
+  --bg:#0d0d12;--s1:#13131a;--s2:#1a1a24;--s3:#222230;
+  --border:#2a2a3a;--border2:#333345;
+  --accent:#6c63ff;--accent-h:#8b85ff;
+  --red:#ff4d6d;--green:#00c896;--gold:#f4a034;--blue:#3b9eff;--warn:#ffb347;
+  --text:#eeeef5;--muted:#7070a0;--dim:#404060;
+  --fh:'Outfit',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r:12px;--r2:8px;--glow:0 0 30px rgba(108,99,255,0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(108,99,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.04) 1px,transparent 1px);
+  background-size:48px 48px;}
 
-/* ── GRID BG ── */
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(108,99,255,0.04) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(108,99,255,0.04) 1px,transparent 1px);
-  background-size:48px 48px;
-}
-
-/* ════════════════ LOGIN ════════════════ */
-#login-screen{
-  position:fixed;inset:0;z-index:100;
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  background:var(--bg);
-}
-.login-wrap{
-  width:100%;max-width:400px;
-  animation:riseIn .6s cubic-bezier(.22,1,.36,1);
-}
-.login-brand{
-  text-align:center;margin-bottom:40px;
-}
-.login-brand-name{
-  font-size:32px;font-weight:800;letter-spacing:-.04em;
-  background:linear-gradient(135deg,#fff 30%,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);}
+.login-wrap{width:100%;max-width:400px;animation:riseIn .6s cubic-bezier(.22,1,.36,1);}
+.login-brand{text-align:center;margin-bottom:40px;}
+.login-brand-name{font-size:32px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .login-brand-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.05em;}
-
-.login-card{
-  background:var(--s1);border:1px solid var(--border);border-radius:20px;
-  padding:36px 32px;box-shadow:var(--glow);
-}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:36px 32px;box-shadow:var(--glow);}
 .login-card h2{font-size:20px;font-weight:700;margin-bottom:4px;}
-.login-card p{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.login-card>p{font-size:13px;color:var(--muted);margin-bottom:28px;}
 
-.fg{display:flex;flex-direction:column;margin-bottom:16px;}
-.fg label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-input,select{
-  background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);
-  color:var(--text);font-family:var(--fh);font-size:14px;padding:11px 14px;
-  outline:none;transition:border .2s,box-shadow .2s;width:100%;
-}
+/* FORMS */
+.fg{display:flex;flex-direction:column;margin-bottom:14px;}
+.fg label,.fg0 label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.fg0{display:flex;flex-direction:column;}
+input,select,textarea{background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--text);font-family:var(--fh);font-size:14px;padding:11px 14px;outline:none;transition:border .2s,box-shadow .2s;width:100%;}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.12);}
 input::placeholder{color:var(--dim);}
+input.inp-ok{border-color:var(--green);}
+input.inp-err{border-color:var(--red);}
 select option{background:var(--s2);}
 .pw-wrap{position:relative;}
 .pw-wrap input{padding-right:44px;}
 .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0;}
+.err-box{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:var(--r2);color:#ff8fa3;font-size:13px;padding:10px 14px;margin-bottom:14px;display:none;}
 
-.err-box{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:var(--r2);color:#ff8fa3;font-size:13px;padding:10px 14px;margin-bottom:16px;display:none;}
-
-/* ════════════════ BUTTONS ════════════════ */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);border:none;font-family:var(--fh);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;letter-spacing:.01em;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);border:none;font-family:var(--fh);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;}
 .btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
 .btn-accent{background:var(--accent);color:#fff;}
 .btn-accent:hover{background:var(--accent-h);transform:translateY(-1px);}
@@ -82,35 +58,25 @@ select option{background:var(--s2);}
 .btn-red:hover{background:var(--red);color:#fff;}
 .btn-gold{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-size:12px;padding:7px 13px;}
 .btn-gold:hover{background:var(--gold);color:#000;}
-.btn-green{background:var(--green);color:#000;font-size:12px;padding:7px 13px;}
-.btn-green:hover{background:#00e0aa;}
 .btn-blue{background:transparent;border:1.5px solid var(--blue);color:var(--blue);font-size:12px;padding:7px 13px;}
 .btn-blue:hover{background:var(--blue);color:#fff;}
 .btn-sm{font-size:12px;padding:7px 13px;background:var(--s3);border:1px solid var(--border);color:var(--muted);}
 .btn-sm:hover{border-color:var(--accent);color:var(--text);}
+.btn-green{background:var(--green);color:#000;font-size:13px;padding:10px 22px;}
+.btn-green:hover{background:#00e0aa;}
 
-/* ════════════════ APP SHELL ════════════════ */
+/* APP */
 #app{display:none;min-height:100vh;position:relative;z-index:1;}
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:58px;
-  background:rgba(13,13,18,0.95);border-bottom:1px solid var(--border);
-  backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;
-}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:rgba(13,13,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;}
 .topbar-left{display:flex;align-items:center;gap:12px;}
 .topbar-logo{font-size:16px;font-weight:800;letter-spacing:-.02em;color:#fff;}
-.role-badge{
-  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 10px;border-radius:20px;
-}
+.role-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
 .role-admin{background:rgba(108,99,255,.2);color:var(--accent-h);border:1px solid rgba(108,99,255,.3);}
 .role-member{background:rgba(0,200,150,.15);color:var(--green);border:1px solid rgba(0,200,150,.25);}
 .topbar-right{display:flex;align-items:center;gap:10px;}
 .user-chip{font-size:12px;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;}
-
-/* TABS */
-.tabs{display:flex;padding:0 28px;background:var(--s1);border-bottom:1px solid var(--border);}
-.tab{font-family:var(--fh);font-size:13px;font-weight:600;padding:15px 18px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.01em;}
+.tabs{display:flex;padding:0 28px;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{font-family:var(--fh);font-size:13px;font-weight:600;padding:15px 18px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .tab:hover:not(.active){color:var(--text);}
 
@@ -119,7 +85,7 @@ select option{background:var(--s2);}
 .panel{display:none;animation:riseIn .3s ease;}
 .panel.active{display:block;}
 
-/* STATS ROW */
+/* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
 .stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;}
 .stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
@@ -127,32 +93,33 @@ select option{background:var(--s2);}
 .stat-val.green{color:var(--green);}
 .stat-val.gold{color:var(--gold);}
 
-/* CARD */
+/* CARDS */
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:22px;}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.card-title{font-size:14px;font-weight:700;color:var(--accent-h);text-transform:uppercase;letter-spacing:.07em;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:end;}
-.fg0{display:flex;flex-direction:column;}
+.card-title{font-size:13px;font-weight:700;color:var(--accent-h);text-transform:uppercase;letter-spacing:.07em;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;}
 .mt{margin-top:14px;}
 
+/* STUDENT LOOKUP */
+.lookup-box{background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
+.lookup-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;}
+.lookup-status{margin-top:14px;padding:12px 16px;border-radius:var(--r2);font-size:13px;font-weight:500;display:none;align-items:center;gap:10px;}
+.lookup-status.show{display:flex;}
+.ls-found{background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.25);color:var(--green);}
+.ls-new{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);color:var(--accent-h);}
+.ls-err{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:#ff8fa3;}
+.ls-icon{font-size:18px;flex-shrink:0;}
+.name-field{margin-top:14px;display:none;animation:riseIn .2s ease;}
+.name-field.show{display:block;}
+
 /* AMOUNT BOX */
-.amt-box{
-  background:linear-gradient(135deg,rgba(0,200,150,.15),rgba(0,200,150,.05));
-  border:1px solid rgba(0,200,150,.3);border-radius:var(--r2);
-  padding:14px 18px;display:none;align-items:center;justify-content:space-between;margin-top:14px;
-}
+.amt-box{background:linear-gradient(135deg,rgba(0,200,150,.12),rgba(0,200,150,.04));border:1px solid rgba(0,200,150,.25);border-radius:var(--r2);padding:14px 18px;display:none;align-items:center;justify-content:space-between;margin-top:14px;}
 .amt-box.show{display:flex;}
 .amt-lbl{font-size:11px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.07em;}
 .amt-val{font-family:var(--fm);font-size:22px;color:var(--green);font-weight:500;}
-
-/* PAY OPTIONS */
 .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
-.pay-opt{
-  border:2px solid var(--border);border-radius:var(--r2);padding:14px;
-  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;
-  background:var(--s2);
-}
+.pay-opt{border:2px solid var(--border);border-radius:var(--r2);padding:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;background:var(--s2);}
 .pay-opt:hover{border-color:var(--accent);}
 .pay-opt.sel{border-color:var(--accent);background:rgba(108,99,255,.08);}
 .pay-icon{font-size:20px;}
@@ -176,42 +143,42 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
 .pill-upi{background:rgba(59,158,255,.1);color:var(--blue);}
 .pill-admin{background:rgba(108,99,255,.15);color:var(--accent-h);}
 .pill-member{background:rgba(0,200,150,.1);color:var(--green);}
-
-/* EMPTY */
 .empty{text-align:center;padding:48px 20px;color:var(--muted);}
 .empty .ei{font-size:36px;margin-bottom:10px;opacity:.3;}
 
+/* SEARCH BAR */
+.search-bar{display:flex;gap:10px;margin-bottom:16px;}
+.search-bar input{max-width:320px;}
+
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;width:100%;max-width:480px;box-shadow:var(--glow);animation:riseIn .25s cubic-bezier(.22,1,.36,1);}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;width:100%;max-width:500px;box-shadow:var(--glow);animation:riseIn .25s cubic-bezier(.22,1,.36,1);}
 .modal h2{font-size:18px;font-weight:700;margin-bottom:4px;}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
 .modal-footer{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
 
 /* TOAST */
-#toast{position:fixed;bottom:22px;right:22px;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;display:none;z-index:999;max-width:360px;line-height:1.5;animation:slideR .3s ease;}
+#toast{position:fixed;bottom:22px;right:22px;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;display:none;z-index:999;max-width:380px;line-height:1.5;}
 .t-ok{background:var(--green);color:#000;}
 .t-err{background:var(--red);color:#fff;}
 
 .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;}
-
 @keyframes rot{to{transform:rotate(360deg);}}
 @keyframes riseIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-@keyframes slideR{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
 
-@media(max-width:640px){
+@media(max-width:700px){
   .row2,.row3,.stats-row{grid-template-columns:1fr;}
+  .lookup-row{grid-template-columns:1fr;} 
   .content{padding:16px;}
-  .topbar,.tabs{padding:0 16px;}
+  .topbar,.tabs{padding:0 14px;}
   .pay-grid{grid-template-columns:1fr;}
-  .modal{padding:22px 18px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════════ LOGIN ════════════════ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-wrap">
     <div class="login-brand">
@@ -222,10 +189,7 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
       <h2>Sign In</h2>
       <p>Enter your credentials to continue</p>
       <div id="login-err" class="err-box"></div>
-      <div class="fg">
-        <label>Email</label>
-        <input type="email" id="l-email" placeholder="you@example.com">
-      </div>
+      <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com"></div>
       <div class="fg">
         <label>Password</label>
         <div class="pw-wrap">
@@ -233,53 +197,47 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
           <button class="eye" type="button" onclick="toggleEye('l-pw',this)">👁</button>
         </div>
       </div>
-      <button class="btn btn-accent btn-full" type="button" id="login-btn" onclick="doLogin()">Sign In</button>
+      <button class="btn btn-accent btn-full" id="login-btn" type="button" onclick="doLogin()">Sign In</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════ APP ════════════════ -->
+<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-logo">Accolade 4.0</div>
-      <span class="role-badge" id="role-badge">—</span>
+      <span class="role-badge" id="role-badge"></span>
     </div>
     <div class="topbar-right">
-      <span class="user-chip" id="user-chip">—</span>
+      <span class="user-chip" id="user-chip"></span>
       <button class="btn btn-sm" type="button" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
-
   <div class="tabs" id="tabs-bar"></div>
-
   <div class="content" id="main-content"></div>
 </div>
 
-<!-- ════ MODAL: Add / Edit Member ════ -->
+<!-- MODAL: Member -->
 <div class="overlay" id="m-member">
   <div class="modal">
-    <h2 id="m-member-title">Add Member</h2>
-    <p class="modal-sub" id="m-member-sub">Fill in the details below.</p>
-    <input type="hidden" id="m-member-id">
+    <h2 id="mm-title">Add Member</h2>
+    <p class="modal-sub" id="mm-sub"></p>
+    <input type="hidden" id="mm-id">
     <div class="row2" style="margin-bottom:14px">
-      <div class="fg0"><label>Full Name</label><input type="text" id="m-m-name" placeholder="Rahul Sharma"></div>
-      <div class="fg0"><label>Email</label><input type="email" id="m-m-email" placeholder="rahul@example.com"></div>
+      <div class="fg0"><label>Full Name</label><input type="text" id="mm-name" placeholder="Rahul Sharma"></div>
+      <div class="fg0"><label>Phone Number</label><input type="tel" id="mm-phone" placeholder="9876543210" maxlength="10"></div>
     </div>
-    <div class="row2" style="margin-bottom:14px">
+    <div class="fg0" style="margin-bottom:14px">
+      <label>Email</label><input type="email" id="mm-email" placeholder="rahul@example.com">
+    </div>
+    <div class="row2">
       <div class="fg0">
-        <label>Password <span id="pw-hint" style="font-size:10px;color:var(--muted)">(leave blank to keep current)</span></label>
-        <div class="pw-wrap">
-          <input type="password" id="m-m-pw" placeholder="Min 8 characters">
-          <button class="eye" type="button" onclick="toggleEye('m-m-pw',this)">👁</button>
-        </div>
+        <label>Password <span id="pw-hint" style="font-size:10px;color:var(--dim);display:none">(blank = keep current)</span></label>
+        <div class="pw-wrap"><input type="password" id="mm-pw" placeholder="Min 8 chars"><button class="eye" type="button" onclick="toggleEye('mm-pw',this)">👁</button></div>
       </div>
-      <div class="fg0">
-        <label>Role</label>
-        <select id="m-m-role">
-          <option value="member">Member</option>
-          <option value="admin">Admin</option>
-        </select>
+      <div class="fg0"><label>Role</label>
+        <select id="mm-role"><option value="member">Member</option><option value="admin">Admin</option></select>
       </div>
     </div>
     <div class="modal-footer">
@@ -289,30 +247,43 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
   </div>
 </div>
 
-<!-- ════ MODAL: Edit Registration ════ -->
+<!-- MODAL: Student Edit -->
+<div class="overlay" id="m-student">
+  <div class="modal">
+    <h2>Edit Student</h2>
+    <p class="modal-sub" id="ms-sub"></p>
+    <input type="hidden" id="ms-id">
+    <div class="fg0" style="margin-bottom:14px"><label>Full Name</label><input type="text" id="ms-name"></div>
+    <div class="row2" style="margin-bottom:14px">
+      <div class="fg0"><label>Phone</label><input type="tel" id="ms-phone" maxlength="10"></div>
+      <div class="fg0"><label>Email</label><input type="email" id="ms-email"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="closeM('m-student')">Cancel</button>
+      <button class="btn btn-accent" type="button" id="btn-save-student" onclick="saveStudent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Registration -->
 <div class="overlay" id="m-edit">
   <div class="modal">
     <h2>Edit Registration</h2>
-    <p class="modal-sub" id="m-edit-sub"></p>
-    <input type="hidden" id="m-edit-id">
-    <input type="hidden" id="m-edit-stu-id">
+    <p class="modal-sub" id="me-sub"></p>
+    <input type="hidden" id="me-id">
+    <input type="hidden" id="me-stu-id">
     <div class="row2" style="margin-bottom:14px">
-      <div class="fg0"><label>Student Name</label><input type="text" id="m-e-name"></div>
-      <div class="fg0"><label>Phone</label><input type="tel" id="m-e-phone" maxlength="10"></div>
+      <div class="fg0"><label>Student Name</label><input type="text" id="me-name"></div>
+      <div class="fg0"><label>Phone</label><input type="tel" id="me-phone" maxlength="10"></div>
     </div>
-    <div class="fg0" style="margin-bottom:14px"><label>Email</label><input type="email" id="m-e-email"></div>
-    <div class="fg0" style="margin-bottom:14px"><label>Event</label><select id="m-e-event"></select></div>
+    <div class="fg0" style="margin-bottom:14px"><label>Email</label><input type="email" id="me-email"></div>
+    <div class="fg0" style="margin-bottom:14px"><label>Event</label><select id="me-event"></select></div>
     <div class="row2">
-      <div class="fg0">
-        <label>Payment</label>
-        <select id="m-e-pay" onchange="toggleEditUPI()">
-          <option value="cash">Cash</option>
-          <option value="upi">UPI</option>
-        </select>
+      <div class="fg0"><label>Payment</label>
+        <select id="me-pay" onchange="toggleEditUPI()"><option value="cash">Cash</option><option value="upi">UPI</option></select>
       </div>
-      <div class="fg0" id="m-e-txn-wrap" style="display:none">
-        <label>Transaction ID</label>
-        <input type="text" id="m-e-txn" style="font-family:var(--fm)">
+      <div class="fg0" id="me-txn-wrap" style="display:none">
+        <label>Transaction ID</label><input type="text" id="me-txn" style="font-family:var(--fm)">
       </div>
     </div>
     <div class="modal-footer">
@@ -322,27 +293,13 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
   </div>
 </div>
 
-<!-- ════ MODAL: Delete Confirm ════ -->
-<div class="overlay" id="m-del">
-  <div class="modal">
-    <h2>Confirm Delete</h2>
-    <p class="modal-sub" id="m-del-sub"></p>
-    <input type="hidden" id="m-del-id">
-    <input type="hidden" id="m-del-type">
-    <div class="modal-footer">
-      <button class="btn btn-ghost" type="button" onclick="closeM('m-del')">Cancel</button>
-      <button class="btn btn-red" type="button" id="btn-del" onclick="confirmDel()">Delete</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════ MODAL: Edit Event Fee ════ -->
+<!-- MODAL: Event Fee -->
 <div class="overlay" id="m-fee">
   <div class="modal">
     <h2>Edit Event Fee</h2>
-    <p class="modal-sub" id="m-fee-sub"></p>
-    <input type="hidden" id="m-fee-id">
-    <div class="fg0"><label>New Fee (₹)</label><input type="number" id="m-fee-val" min="1" step="0.01"></div>
+    <p class="modal-sub" id="mf-sub"></p>
+    <input type="hidden" id="mf-id">
+    <div class="fg0"><label>New Fee (₹)</label><input type="number" id="mf-val" min="1" step="0.01"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeM('m-fee')">Cancel</button>
       <button class="btn btn-accent" type="button" id="btn-save-fee" onclick="saveFee()">Save Fee</button>
@@ -350,16 +307,31 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
   </div>
 </div>
 
+<!-- MODAL: Confirm Delete -->
+<div class="overlay" id="m-del">
+  <div class="modal">
+    <h2>Confirm Delete</h2>
+    <p class="modal-sub" id="md-sub"></p>
+    <input type="hidden" id="md-id">
+    <input type="hidden" id="md-type">
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="closeM('m-del')">Cancel</button>
+      <button class="btn btn-red" type="button" id="btn-del" onclick="confirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-// ══ STATE ════════════════════════════════════════
-let session   = null;   // { token, name, role }
-let eventsCache = {};   // id → event
-let salesCache  = {};   // id → registration
-let selPay    = '';
+// ══ STATE ═══════════════════════════════════════════════════════
+let session    = null;
+let eventsCache= {};
+let salesCache = {};
+let selPay     = '';
+let lookupState= null; // { status, student? }
 
-// ══ UTILS ════════════════════════════════════════
+// ══ UTILS ════════════════════════════════════════════════════════
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function fmtDate(ts){return new Date(ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function fmtMoney(v){return '₹'+parseFloat(v).toFixed(2);}
@@ -369,43 +341,38 @@ function toast(msg,type='ok'){
   const el=document.getElementById('toast');
   el.textContent=msg;el.className=type==='ok'?'t-ok':'t-err';
   el.style.display='block';clearTimeout(_tt);
-  _tt=setTimeout(()=>el.style.display='none',4500);
+  _tt=setTimeout(()=>el.style.display='none',5000);
 }
-
 function toggleEye(id,btn){
-  const el=document.getElementById(id);
-  el.type=el.type==='password'?'text':'password';
+  const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';
   btn.textContent=el.type==='password'?'👁':'🙈';
 }
-
 function busy(id,yes,label){
-  const b=document.getElementById(id);b.disabled=yes;
-  b.innerHTML=yes?'<span class="spin"></span>':label;
+  const b=document.getElementById(id);if(!b)return;
+  b.disabled=yes;b.innerHTML=yes?'<span class="spin"></span>':label;
 }
-
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 async function api(method,path,body){
   const opts={method,headers:{'Content-Type':'application/json','x-session':session?.token||''}};
-  if(body) opts.body=JSON.stringify(body);
+  if(body)opts.body=JSON.stringify(body);
   const res=await fetch(path,opts);
   const json=await res.json();
-  if(!res.ok) throw new Error(json.error||'Request failed');
+  if(!res.ok)throw new Error(json.error||'Request failed');
   return json;
 }
 
-// ══ LOGIN ════════════════════════════════════════
-document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-document.getElementById('l-email').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+// ══ LOGIN ════════════════════════════════════════════════════════
+['l-pw','l-email'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
 
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim();
   const pw=document.getElementById('l-pw').value;
   const errEl=document.getElementById('login-err');
   errEl.style.display='none';
-  if(!email||!pw){errEl.textContent='Enter email and password.';errEl.style.display='block';return;}
+  if(!email||!pw){errEl.textContent='Enter your email and password.';errEl.style.display='block';return;}
   busy('login-btn',true);
   try{
     const data=await api('POST','/api/login',{email,password:pw});
@@ -417,214 +384,298 @@ async function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     await loadEventsCache();
-    buildDashboard();
-  }catch(e){
-    errEl.textContent=e.message;errEl.style.display='block';
-  }
+    if(data.role==='admin')buildAdmin();
+    else buildMember();
+  }catch(e){errEl.textContent=e.message;errEl.style.display='block';}
   busy('login-btn',false,'Sign In');
 }
 
 async function doLogout(){
   try{await api('POST','/api/logout');}catch(e){}
-  session=null;selPay='';eventsCache={};salesCache={};
+  session=null;selPay='';eventsCache={};salesCache={};lookupState=null;
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
-  document.getElementById('l-email').value='';
-  document.getElementById('l-pw').value='';
+  document.getElementById('l-email').value='';document.getElementById('l-pw').value='';
   document.getElementById('login-err').style.display='none';
   document.getElementById('tabs-bar').innerHTML='';
   document.getElementById('main-content').innerHTML='';
 }
 
-// ══ BUILD DASHBOARD BY ROLE ══════════════════════
-function buildDashboard(){
-  if(session.role==='admin') buildAdmin();
-  else buildMember();
+// ══ EVENTS CACHE ════════════════════════════════════════════════
+async function loadEventsCache(){
+  try{
+    const data=await api('GET','/api/events');
+    eventsCache={};data.forEach(ev=>eventsCache[ev.id]=ev);
+  }catch(e){console.error('events',e);}
 }
 
-// ════════════════════════════════════════════════════
-//  ADMIN DASHBOARD
-// ════════════════════════════════════════════════════
+function buildEventDropdowns(){
+  const evs=Object.values(eventsCache);
+  const sel=document.getElementById('r-event');
+  if(sel){sel.innerHTML='<option value="">-- Choose an event --</option>';
+    evs.forEach(ev=>sel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`);}
+  const msel=document.getElementById('me-event');
+  if(msel){msel.innerHTML='';evs.forEach(ev=>msel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`);}
+}
+
+// ══ TAB SWITCHING ════════════════════════════════════════════════
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const p=document.getElementById('panel-'+name);if(p)p.classList.add('active');
+  if(name==='sales'||name==='registrations')loadSales();
+  if(name==='members')loadMembers();
+  if(name==='students')loadStudents();
+  if(name==='events')loadEventsTable();
+  if(name==='overview')loadAdminOverview();
+  if(name==='register'){buildEventDropdowns();resetLookup();}
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ADMIN
+// ════════════════════════════════════════════════════════════════
 function buildAdmin(){
   document.getElementById('tabs-bar').innerHTML=`
     <button class="tab active" type="button" onclick="switchTab('overview',this)">📊 Overview</button>
     <button class="tab" type="button" onclick="switchTab('registrations',this)">📋 All Registrations</button>
     <button class="tab" type="button" onclick="switchTab('members',this)">👥 Members</button>
+    <button class="tab" type="button" onclick="switchTab('students',this)">🎓 Students</button>
     <button class="tab" type="button" onclick="switchTab('events',this)">🎪 Events</button>
-    <button class="tab" type="button" onclick="switchTab('register',this)">✚ New Registration</button>
-  `;
+    <button class="tab" type="button" onclick="switchTab('register',this)">✚ New Registration</button>`;
   document.getElementById('main-content').innerHTML=`
-    <div id="panel-overview"       class="panel active">${adminOverviewHTML()}</div>
-    <div id="panel-registrations"  class="panel">${salesTableHTML(true)}</div>
-    <div id="panel-members"        class="panel">${membersHTML()}</div>
-    <div id="panel-events"         class="panel">${eventsHTML()}</div>
-    <div id="panel-register"       class="panel">${registerHTML()}</div>
-  `;
+    <div id="panel-overview"      class="panel active">${overviewHTML()}</div>
+    <div id="panel-registrations" class="panel">${salesTableHTML(true)}</div>
+    <div id="panel-members"       class="panel">${membersHTML()}</div>
+    <div id="panel-students"      class="panel">${studentsHTML()}</div>
+    <div id="panel-events"        class="panel">${eventsHTML()}</div>
+    <div id="panel-register"      class="panel">${registerHTML()}</div>`;
   loadAdminOverview();
-  loadMembers();
-  loadEventsTable();
   buildEventDropdowns();
-  initRegisterForm();
 }
 
-function adminOverviewHTML(){return `
-  <div id="admin-stats" class="stats-row">
+// ── OVERVIEW ─────────────────────────────────────────────────────
+function overviewHTML(){return `
+  <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Total Registrations</div><div class="stat-val" id="st-regs">—</div></div>
     <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-val green" id="st-rev">—</div></div>
     <div class="stat-card"><div class="stat-label">Active Members</div><div class="stat-val gold" id="st-mem">—</div></div>
     <div class="stat-card"><div class="stat-label">Events</div><div class="stat-val" id="st-evs">—</div></div>
   </div>
   <div class="card">
-    <div class="card-head"><div class="card-title">Recent Registrations</div></div>
+    <div class="card-head"><div class="card-title">Recent Registrations</div><button class="btn btn-sm" onclick="loadAdminOverview()">↺ Refresh</button></div>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th></tr></thead>
-      <tbody id="recent-tbody"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+      <tbody id="recent-body"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
     </table></div>
-  </div>
-`;}
+  </div>`;}
 
 async function loadAdminOverview(){
   try{
-    const [sales,members,events]=await Promise.all([
-      api('GET','/api/sales'),
-      api('GET','/api/members'),
-      api('GET','/api/events')
-    ]);
-    const totalRev=sales.reduce((s,r)=>s+parseFloat(r.amount_paid),0);
+    const[sales,members,events]=await Promise.all([api('GET','/api/sales'),api('GET','/api/members'),api('GET','/api/events')]);
     document.getElementById('st-regs').textContent=sales.length;
-    document.getElementById('st-rev').textContent=fmtMoney(totalRev);
+    document.getElementById('st-rev').textContent=fmtMoney(sales.reduce((s,r)=>s+parseFloat(r.amount_paid),0));
     document.getElementById('st-mem').textContent=members.length;
     document.getElementById('st-evs').textContent=events.length;
-    renderRecentSales(sales.slice(0,10));
+    const tbody=document.getElementById('recent-body');
+    if(!tbody)return;
+    if(!sales.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>';return;}
+    const rows=sales.slice(0,10).map(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><div style="font-weight:600" class="sn"></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm)" class="sp"></div></td>
+        <td class="et"></td><td style="color:var(--muted)" class="mn"></td>
+        <td style="font-family:var(--fm)">${fmtMoney(r.amount_paid)}</td>
+        <td><span class="pill ${r.payment_method==='cash'?'pill-cash':'pill-upi'}">${r.payment_method==='cash'?'💵 Cash':'📱 UPI'}</span></td>
+        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>`;
+      tr.querySelector('.sn').textContent=r.Students.name;
+      tr.querySelector('.sp').textContent=r.Students.phone_number;
+      tr.querySelector('.et').textContent=r.Events.title;
+      tr.querySelector('.mn').textContent=r.Members?r.Members.name:'—';
+      return tr;
+    });
+    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
   }catch(e){toast(e.message,'err');}
 }
 
-function renderRecentSales(data){
-  const tbody=document.getElementById('recent-tbody');
-  if(!tbody)return;
-  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>';return;}
-  const rows=data.map(r=>{
-    const tr=document.createElement('tr');
-    const pillClass=r.payment_method==='cash'?'pill-cash':'pill-upi';
-    const pillText=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
-    tr.innerHTML=`
-      <td><div class="sname"></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm)" class="sphone"></div></td>
-      <td class="evtitle"></td>
-      <td style="color:var(--muted)" class="mname"></td>
-      <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
-      <td><span class="pill ${pillClass}">${pillText}</span></td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>`;
-    tr.querySelector('.sname').textContent=r.Students.name;
-    tr.querySelector('.sphone').textContent=r.Students.phone_number;
-    tr.querySelector('.evtitle').textContent=r.Events.title;
-    tr.querySelector('.mname').textContent=r.Members?r.Members.name:'—';
-    return tr;
-  });
-  tbody.innerHTML='';
-  rows.forEach(tr=>tbody.appendChild(tr));
-}
-
-// ════════════════════════════════════════════════════
-//  MEMBERS PANEL (admin)
-// ════════════════════════════════════════════════════
+// ── MEMBERS ──────────────────────────────────────────────────────
 function membersHTML(){return `
   <div class="sec-hdr">
     <div style="display:flex;align-items:center"><span class="sec-title">Members</span><span class="count" id="mem-count">0</span></div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" type="button" onclick="loadMembers()">↺ Refresh</button>
-      <button class="btn btn-accent" type="button" onclick="openAddMember()">+ Add Member</button>
+      <button class="btn btn-sm" onclick="loadMembers()">↺ Refresh</button>
+      <button class="btn btn-accent" onclick="openAddMember()">+ Add Member</button>
     </div>
   </div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
-    <tbody id="mem-tbody"><tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
-  </table></div>
-`;}
+    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
+    <tbody id="mem-body"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>`;}
 
 async function loadMembers(){
-  const tbody=document.getElementById('mem-tbody');
-  if(!tbody)return;
-  tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr>';
+  const tbody=document.getElementById('mem-body');if(!tbody)return;
   try{
     const data=await api('GET','/api/members');
-    const cnt=document.getElementById('mem-count');
-    if(cnt)cnt.textContent=data.length;
-    if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">👥</div><p>No members yet.</p></div></td></tr>';return;}
+    const c=document.getElementById('mem-count');if(c)c.textContent=data.length;
+    if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">👥</div><p>No members yet.</p></div></td></tr>';return;}
     const rows=data.map(m=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td><strong class="mname"></strong></td>
-        <td style="color:var(--muted)" class="memail"></td>
+      tr.innerHTML=`<td><strong class="mn"></strong></td>
+        <td class="mp"></td>
+        <td style="color:var(--muted)" class="me"></td>
         <td><span class="pill ${m.role==='admin'?'pill-admin':'pill-member'}">${m.role}</span></td>
         <td style="color:var(--muted);font-size:12px">${fmtDate(m.created_at)}</td>
         <td><div class="acts">
-          <button class="btn btn-blue" type="button" data-id="${esc(m.id)}" data-action="edit-member">Edit</button>
-          <button class="btn btn-red"  type="button" data-id="${esc(m.id)}" data-name="" data-action="del-member">Delete</button>
+          <button class="btn btn-blue" data-action="edit">Edit</button>
+          <button class="btn btn-red" data-action="del">Delete</button>
         </div></td>`;
-      tr.querySelector('.mname').textContent=m.name;
-      tr.querySelector('.memail').textContent=m.email;
-      tr.querySelector('[data-action="del-member"]').dataset.name=m.name;
-      tr.querySelector('[data-action="edit-member"]').addEventListener('click',()=>openEditMember(m));
-      tr.querySelector('[data-action="del-member"]').addEventListener('click',()=>openDel(m.id,'member','member "'+m.name+'"'));
+      tr.querySelector('.mn').textContent=m.name;
+      tr.querySelector('.me').textContent=m.email;
+      // Phone — clickable call link if present
+      const mpEl=tr.querySelector('.mp');
+      if(m.phone_number){
+        const a=document.createElement('a');
+        a.href='tel:'+m.phone_number;
+        a.style.cssText='color:var(--green);font-family:var(--fm);font-size:13px;text-decoration:none;';
+        a.textContent='📞 '+m.phone_number;
+        mpEl.appendChild(a);
+      } else {
+        mpEl.style.color='var(--dim)';
+        mpEl.textContent='—';
+      }
+      tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditMember(m));
+      tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(m.id,'member','member "'+m.name+'"'));
       return tr;
     });
-    tbody.innerHTML='';
-    rows.forEach(tr=>tbody.appendChild(tr));
+    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
   }catch(e){toast(e.message,'err');}
 }
 
 function openAddMember(){
-  document.getElementById('m-member-title').textContent='Add Member';
-  document.getElementById('m-member-sub').textContent='Create a new member account.';
-  document.getElementById('m-member-id').value='';
-  document.getElementById('m-m-name').value='';
-  document.getElementById('m-m-email').value='';
-  document.getElementById('m-m-pw').value='';
-  document.getElementById('m-m-role').value='member';
+  document.getElementById('mm-title').textContent='Add Member';
+  document.getElementById('mm-sub').textContent='Create a new portal account.';
+  document.getElementById('mm-id').value='';
+  ['mm-name','mm-email','mm-pw','mm-phone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mm-role').value='member';
   document.getElementById('pw-hint').style.display='none';
   openM('m-member');
 }
-
 function openEditMember(m){
-  document.getElementById('m-member-title').textContent='Edit Member';
-  document.getElementById('m-member-sub').textContent='Update details for '+m.name+'.';
-  document.getElementById('m-member-id').value=m.id;
-  document.getElementById('m-m-name').value=m.name;
-  document.getElementById('m-m-email').value=m.email;
-  document.getElementById('m-m-pw').value='';
-  document.getElementById('m-m-role').value=m.role;
+  document.getElementById('mm-title').textContent='Edit Member';
+  document.getElementById('mm-sub').textContent='Editing '+m.name;
+  document.getElementById('mm-id').value=m.id;
+  document.getElementById('mm-name').value=m.name;
+  document.getElementById('mm-phone').value=m.phone_number||'';
+  document.getElementById('mm-email').value=m.email;
+  document.getElementById('mm-pw').value='';
+  document.getElementById('mm-role').value=m.role;
   document.getElementById('pw-hint').style.display='inline';
   openM('m-member');
 }
-
 async function saveMember(){
-  const id    =document.getElementById('m-member-id').value;
-  const name  =document.getElementById('m-m-name').value.trim();
-  const email =document.getElementById('m-m-email').value.trim();
-  const pw    =document.getElementById('m-m-pw').value;
-  const role  =document.getElementById('m-m-role').value;
-
+  const id=document.getElementById('mm-id').value;
+  const name=document.getElementById('mm-name').value.trim();
+  const phone=document.getElementById('mm-phone').value.trim();
+  const email=document.getElementById('mm-email').value.trim();
+  const pw=document.getElementById('mm-pw').value;
+  const role=document.getElementById('mm-role').value;
   if(!name){toast('Enter a name.','err');return;}
   if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
-  if(!id && pw.length<8){toast('Password must be at least 8 characters.','err');return;}
-  if(id && pw && pw.length<8){toast('Password must be at least 8 characters.','err');return;}
-
+  if(phone&&(phone.length!==10||!/^\d+$/.test(phone))){toast('Phone must be exactly 10 digits.','err');return;}
+  if(!id&&pw.length<8){toast('Password must be at least 8 characters.','err');return;}
+  if(id&&pw&&pw.length<8){toast('Password must be at least 8 characters.','err');return;}
   busy('btn-save-member',true);
   try{
-    const body={name,email,role};
-    if(pw) body.password=pw;
-    if(id) await api('PUT','/api/members/'+id,body);
-    else   await api('POST','/api/members',{...body,password:pw});
+    const body={name,email,role,phone};if(pw)body.password=pw;
+    if(id)await api('PUT','/api/members/'+id,body);
+    else await api('POST','/api/members',{...body,password:pw});
     toast(id?'✓ Member updated.':'✓ Member created.');
-    closeM('m-member');
-    loadMembers();
+    closeM('m-member');loadMembers();
   }catch(e){toast(e.message,'err');}
   busy('btn-save-member',false,'Save');
 }
 
-// ════════════════════════════════════════════════════
-//  EVENTS PANEL (admin)
-// ════════════════════════════════════════════════════
+// ── STUDENTS (admin) ─────────────────────────────────────────────
+function studentsHTML(){return `
+  <div class="sec-hdr">
+    <div style="display:flex;align-items:center"><span class="sec-title">Students</span><span class="count" id="stu-count">0</span></div>
+    <button class="btn btn-sm" onclick="loadStudents()">↺ Refresh</button>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="stu-search" placeholder="Search by name, phone or email..." oninput="filterStudents()">
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
+    <tbody id="stu-body"><tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>`;}
+
+let allStudents=[];
+async function loadStudents(){
+  const tbody=document.getElementById('stu-body');if(!tbody)return;
+  try{
+    allStudents=await api('GET','/api/students');
+    const c=document.getElementById('stu-count');if(c)c.textContent=allStudents.length;
+    renderStudents(allStudents);
+  }catch(e){toast(e.message,'err');}
+}
+
+function filterStudents(){
+  const q=(document.getElementById('stu-search')?.value||'').toLowerCase();
+  if(!q){renderStudents(allStudents);return;}
+  renderStudents(allStudents.filter(s=>
+    s.name.toLowerCase().includes(q)||
+    s.phone_number.includes(q)||
+    s.email.toLowerCase().includes(q)
+  ));
+}
+
+function renderStudents(data){
+  const tbody=document.getElementById('stu-body');if(!tbody)return;
+  if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">🎓</div><p>No students found.</p></div></td></tr>';return;}
+  const rows=data.map(s=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong class="sn"></strong></td>
+      <td style="font-family:var(--fm)" class="sp"></td>
+      <td style="color:var(--muted)" class="se"></td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(s.created_at)}</td>
+      <td><div class="acts">
+        <button class="btn btn-blue" data-action="edit">Edit</button>
+        <button class="btn btn-red"  data-action="del">Delete</button>
+      </div></td>`;
+    tr.querySelector('.sn').textContent=s.name;
+    tr.querySelector('.sp').textContent=s.phone_number;
+    tr.querySelector('.se').textContent=s.email;
+    tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditStudent(s));
+    tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(s.id,'student','student "'+s.name+'"'));
+    return tr;
+  });
+  tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
+}
+
+function openEditStudent(s){
+  document.getElementById('ms-id').value=s.id;
+  document.getElementById('ms-sub').textContent='Editing details for '+s.name;
+  document.getElementById('ms-name').value=s.name;
+  document.getElementById('ms-phone').value=s.phone_number;
+  document.getElementById('ms-email').value=s.email;
+  openM('m-student');
+}
+async function saveStudent(){
+  const id=document.getElementById('ms-id').value;
+  const name=document.getElementById('ms-name').value.trim();
+  const phone=document.getElementById('ms-phone').value.trim();
+  const email=document.getElementById('ms-email').value.trim();
+  if(!name){toast('Enter a name.','err');return;}
+  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone.','err');return;}
+  if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
+  busy('btn-save-student',true);
+  try{
+    await api('PUT','/api/students/'+id,{name,phone,email});
+    toast('✓ Student updated.');closeM('m-student');loadStudents();
+  }catch(e){toast(e.message,'err');}
+  busy('btn-save-student',false,'Save');
+}
+
+// ── EVENTS ───────────────────────────────────────────────────────
 function eventsHTML(){return `
   <div class="card">
     <div class="card-head"><div class="card-title">Add New Event</div></div>
@@ -632,45 +683,38 @@ function eventsHTML(){return `
       <div class="fg0"><label>Event Title</label><input type="text" id="ev-title" placeholder="Dance Competition"></div>
       <div class="fg0"><label>Registration Fee (₹)</label><input type="number" id="ev-cost" placeholder="199" min="1" step="0.01"></div>
     </div>
-    <div style="margin-top:14px">
-      <button class="btn btn-accent" type="button" id="btn-add-ev" onclick="addEvent()">Add Event</button>
-    </div>
+    <div style="margin-top:14px"><button class="btn btn-accent" id="btn-add-ev" onclick="addEvent()">Add Event</button></div>
   </div>
   <div class="sec-hdr">
     <div style="display:flex;align-items:center"><span class="sec-title">All Events</span><span class="count" id="ev-count">0</span></div>
-    <button class="btn btn-sm" type="button" onclick="loadEventsTable()">↺ Refresh</button>
+    <button class="btn btn-sm" onclick="loadEventsTable()">↺ Refresh</button>
   </div>
   <div class="tbl-wrap"><table>
     <thead><tr><th>Title</th><th>Fee</th><th>Created</th><th>Actions</th></tr></thead>
-    <tbody id="ev-tbody"><tr><td colspan="4"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
-  </table></div>
-`;}
+    <tbody id="ev-body"><tr><td colspan="4"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>`;}
 
 async function loadEventsTable(){
-  const tbody=document.getElementById('ev-tbody');
-  if(!tbody)return;
+  const tbody=document.getElementById('ev-body');if(!tbody)return;
   try{
     const data=await api('GET','/api/events');
-    const cnt=document.getElementById('ev-count');
-    if(cnt)cnt.textContent=data.length;
+    const c=document.getElementById('ev-count');if(c)c.textContent=data.length;
     if(!data.length){tbody.innerHTML='<tr><td colspan="4"><div class="empty"><div class="ei">🎪</div><p>No events yet.</p></div></td></tr>';return;}
     const rows=data.map(ev=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td><strong class="evname"></strong></td>
+      tr.innerHTML=`<td><strong class="en"></strong></td>
         <td style="font-family:var(--fm);font-weight:500">${fmtMoney(ev.cost)}</td>
         <td style="color:var(--muted);font-size:12px">${fmtDate(ev.created_at)}</td>
         <td><div class="acts">
-          <button class="btn btn-gold" type="button" data-action="edit-fee">Edit Fee</button>
-          <button class="btn btn-red"  type="button" data-action="del-ev">Delete</button>
+          <button class="btn btn-gold" data-action="fee">Edit Fee</button>
+          <button class="btn btn-red"  data-action="del">Delete</button>
         </div></td>`;
-      tr.querySelector('.evname').textContent=ev.title;
-      tr.querySelector('[data-action="edit-fee"]').addEventListener('click',()=>openFee(ev.id,ev.title,ev.cost));
-      tr.querySelector('[data-action="del-ev"]').addEventListener('click',()=>openDel(ev.id,'event','event "'+ev.title+'"'));
+      tr.querySelector('.en').textContent=ev.title;
+      tr.querySelector('[data-action="fee"]').addEventListener('click',()=>openFee(ev.id,ev.title,ev.cost));
+      tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(ev.id,'event','event "'+ev.title+'"'));
       return tr;
     });
-    tbody.innerHTML='';
-    rows.forEach(tr=>tbody.appendChild(tr));
+    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
   }catch(e){toast(e.message,'err');}
 }
 
@@ -683,135 +727,77 @@ async function addEvent(){
   try{
     await api('POST','/api/events',{title,cost});
     toast('✓ Event added.');
-    document.getElementById('ev-title').value='';
-    document.getElementById('ev-cost').value='';
-    loadEventsTable();
-    await loadEventsCache();
-    buildEventDropdowns();
+    document.getElementById('ev-title').value='';document.getElementById('ev-cost').value='';
+    loadEventsTable();await loadEventsCache();buildEventDropdowns();
   }catch(e){toast(e.message,'err');}
   busy('btn-add-ev',false,'Add Event');
 }
 
 function openFee(id,title,cur){
-  document.getElementById('m-fee-id').value=id;
-  document.getElementById('m-fee-sub').textContent='Current fee for "'+title+'" is '+fmtMoney(cur)+'.';
-  document.getElementById('m-fee-val').value=cur;
+  document.getElementById('mf-id').value=id;
+  document.getElementById('mf-sub').textContent='Current fee for "'+title+'": '+fmtMoney(cur);
+  document.getElementById('mf-val').value=cur;
   openM('m-fee');
 }
-
 async function saveFee(){
-  const id=document.getElementById('m-fee-id').value;
-  const cost=parseFloat(document.getElementById('m-fee-val').value);
+  const id=document.getElementById('mf-id').value;
+  const cost=parseFloat(document.getElementById('mf-val').value);
   if(isNaN(cost)||cost<=0){toast('Enter a valid fee.','err');return;}
   busy('btn-save-fee',true);
   try{
     await api('PUT','/api/events/'+id,{cost});
-    toast('✓ Fee updated.');
-    closeM('m-fee');
-    loadEventsTable();
-    await loadEventsCache();
-    buildEventDropdowns();
+    toast('✓ Fee updated.');closeM('m-fee');
+    loadEventsTable();await loadEventsCache();buildEventDropdowns();
   }catch(e){toast(e.message,'err');}
   busy('btn-save-fee',false,'Save Fee');
 }
 
-// ════════════════════════════════════════════════════
-//  ALL REGISTRATIONS (admin)
-// ════════════════════════════════════════════════════
-function salesTableHTML(isAdmin){
-  const cols=isAdmin
-    ?'<th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>'
-    :'<th>Student</th><th>Event</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>';
-  const colspan=isAdmin?7:6;
-  return `
-  <div class="sec-hdr">
-    <div style="display:flex;align-items:center">
-      <span class="sec-title">${isAdmin?'All Registrations':'My Sales'}</span>
-      <span class="count" id="sales-count">0</span>
-    </div>
-    <button class="btn btn-sm" type="button" onclick="loadSales()">↺ Refresh</button>
-  </div>
-  <div class="tbl-wrap"><table>
-    <thead><tr>${cols}</tr></thead>
-    <tbody id="sales-tbody"><tr><td colspan="${colspan}"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
-  </table></div>`;}
-
-async function loadSales(){
-  const tbody=document.getElementById('sales-tbody');
-  if(!tbody)return;
-  tbody.innerHTML=`<tr><td colspan="${session.role==='admin'?7:6}"><div class="empty"><div class="ei">⏳</div></div></td></tr>`;
-  const isAdmin=session.role==='admin';
-  try{
-    const data=await api('GET','/api/sales');
-    salesCache={};
-    data.forEach(r=>salesCache[r.id]=r);
-    const cnt=document.getElementById('sales-count');
-    if(cnt)cnt.textContent=data.length;
-    if(!data.length){
-      tbody.innerHTML=`<tr><td colspan="${isAdmin?7:6}"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>`;
-      return;
-    }
-    const rows=data.map(r=>{
-      const tr=document.createElement('tr');
-      const pillClass=r.payment_method==='cash'?'pill-cash':'pill-upi';
-      const pillText=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
-      const memberCell=isAdmin?`<td style="color:var(--muted)" class="mname"></td>`:'';
-      tr.innerHTML=`
-        <td><div style="font-weight:600" class="sname"></div>
-            <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:2px" class="sphone"></div></td>
-        <td style="font-weight:500" class="evtitle"></td>
-        ${memberCell}
-        <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
-        <td><span class="pill ${pillClass}">${pillText}</span>
-            ${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
-        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>
-        <td><div class="acts">
-          <button class="btn btn-blue" type="button" data-id="${r.id}" data-action="edit-reg">Edit</button>
-          <button class="btn btn-red"  type="button" data-id="${r.id}" data-action="del-reg">Delete</button>
-        </div></td>`;
-      tr.querySelector('.sname').textContent=r.Students.name;
-      tr.querySelector('.sphone').textContent=r.Students.phone_number;
-      tr.querySelector('.evtitle').textContent=r.Events.title;
-      if(isAdmin&&r.Members) tr.querySelector('.mname').textContent=r.Members.name;
-      if(r.transaction_id) tr.querySelector('.txn').textContent=r.transaction_id;
-      tr.querySelector('[data-action="edit-reg"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
-      tr.querySelector('[data-action="del-reg"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
-      return tr;
-    });
-    tbody.innerHTML='';
-    rows.forEach(tr=>tbody.appendChild(tr));
-  }catch(e){toast(e.message,'err');}
-}
-
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  MEMBER DASHBOARD
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 function buildMember(){
   document.getElementById('tabs-bar').innerHTML=`
     <button class="tab active" type="button" onclick="switchTab('register',this)">✚ New Registration</button>
-    <button class="tab" type="button" onclick="switchTab('sales',this)">📋 My Sales</button>
-  `;
+    <button class="tab" type="button" onclick="switchTab('sales',this)">📋 My Sales</button>`;
   document.getElementById('main-content').innerHTML=`
     <div id="panel-register" class="panel active">${registerHTML()}</div>
-    <div id="panel-sales"    class="panel">${salesTableHTML(false)}</div>
-  `;
+    <div id="panel-sales"    class="panel">${salesTableHTML(false)}</div>`;
   buildEventDropdowns();
-  initRegisterForm();
 }
 
-// ════════════════════════════════════════════════════
-//  NEW REGISTRATION FORM (shared)
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  REGISTRATION FORM WITH SMART LOOKUP
+// ════════════════════════════════════════════════════════════════
 function registerHTML(){return `
   <div class="card">
-    <div class="card-head"><div class="card-title">Student Details</div></div>
-    <div class="row3">
-      <div class="fg0"><label>Full Name</label><input type="text" id="r-name" placeholder="Priya Sharma"></div>
-      <div class="fg0"><label>Phone Number</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
-      <div class="fg0"><label>Email</label><input type="email" id="r-email" placeholder="priya@email.com"></div>
+    <div class="card-head"><div class="card-title">Student Lookup</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Enter the student's phone and email to check if they're already registered.</p>
+
+    <div class="lookup-row">
+      <div class="fg0"><label>Phone Number</label>
+        <input type="tel" id="r-phone" placeholder="9876543210" maxlength="10" oninput="resetLookup()">
+      </div>
+      <div class="fg0"><label>Email Address</label>
+        <input type="email" id="r-email" placeholder="student@email.com" oninput="resetLookup()">
+      </div>
+      <button class="btn btn-accent" id="btn-lookup" onclick="doLookup()" style="height:44px;align-self:end">Check →</button>
+    </div>
+
+    <!-- Status feedback -->
+    <div class="lookup-status" id="ls-box">
+      <span class="ls-icon" id="ls-icon"></span>
+      <span id="ls-msg"></span>
+    </div>
+
+    <!-- Name field — shown only when new student -->
+    <div class="name-field" id="name-field">
+      <div class="fg0"><label>Student Name</label>
+        <input type="text" id="r-name" placeholder="Full name of student">
+      </div>
     </div>
   </div>
-  <div class="card">
+
+  <div class="card" id="event-card" style="display:none">
     <div class="card-head"><div class="card-title">Event & Payment</div></div>
     <div class="fg0"><label>Select Event</label>
       <select id="r-event" onchange="onEventChange()">
@@ -838,43 +824,86 @@ function registerHTML(){return `
       <input type="text" id="r-txn" placeholder="e.g. 4238XXXXXX" style="font-family:var(--fm)">
     </div>
     <div style="display:flex;justify-content:flex-end;margin-top:22px">
-      <button class="btn btn-accent" type="button" id="reg-btn" onclick="submitReg()" style="padding:12px 32px;font-size:14px">
-        Register Student →
-      </button>
+      <button class="btn btn-green" id="reg-btn" onclick="submitReg()">Register Student →</button>
     </div>
-  </div>
-`;}
+  </div>`;}
 
-function initRegisterForm(){
-  buildEventDropdowns();
+// ── LOOKUP LOGIC ─────────────────────────────────────────────────
+function resetLookup(){
+  lookupState=null;
+  const ls=document.getElementById('ls-box');if(ls){ls.className='lookup-status';ls.style.display='';}
+  const nf=document.getElementById('name-field');if(nf)nf.classList.remove('show');
+  const ec=document.getElementById('event-card');if(ec)ec.style.display='none';
+  // clear input styling
+  ['r-phone','r-email'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.remove('inp-ok','inp-err');}
+  });
   selPay='';
+  document.getElementById('opt-cash')?.classList.remove('sel');
+  document.getElementById('opt-upi')?.classList.remove('sel');
+  document.getElementById('upi-field')?.style&&(document.getElementById('upi-field').style.display='none');
+  document.getElementById('amt-box')?.classList.remove('show');
 }
 
-// ════════════════════════════════════════════════════
-//  EVENTS CACHE & DROPDOWNS
-// ════════════════════════════════════════════════════
-async function loadEventsCache(){
+function showLookupStatus(type,msg){
+  const box=document.getElementById('ls-box');
+  const icon=document.getElementById('ls-icon');
+  const msgEl=document.getElementById('ls-msg');
+  if(!box)return;
+  const map={found:['ls-found','✅'],new:['ls-new','✨'],err:['ls-err','⚠️']};
+  const[cls,ico]=map[type]||['ls-err','⚠️'];
+  box.className='lookup-status show '+cls;
+  icon.textContent=ico;
+  msgEl.textContent=msg;
+}
+
+async function doLookup(){
+  const phone=document.getElementById('r-phone')?.value.trim();
+  const email=document.getElementById('r-email')?.value.trim();
+  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone number.','err');return;}
+  if(!email||!email.includes('@')){toast('Enter a valid email address.','err');return;}
+
+  busy('btn-lookup',true);
   try{
-    const data=await api('GET','/api/events');
-    eventsCache={};
-    data.forEach(ev=>eventsCache[ev.id]=ev);
-  }catch(e){console.error('events cache',e);}
-}
+    const result=await api('POST','/api/students/lookup',{phone,email});
+    lookupState=result;
 
-function buildEventDropdowns(){
-  const events=Object.values(eventsCache);
-  // main register dropdown
-  const sel=document.getElementById('r-event');
-  if(sel){
-    sel.innerHTML='<option value="">-- Choose an event --</option>';
-    events.forEach(ev=>{sel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;});
+    if(result.status==='found'){
+      // Auto-fill name, show event card
+      const nf=document.getElementById('name-field');
+      if(nf){
+        nf.classList.add('show');
+        const ni=document.getElementById('r-name');
+        if(ni){ni.value=result.student.name;ni.readOnly=true;ni.style.color='var(--muted)';}
+      }
+      document.getElementById('r-phone').classList.add('inp-ok');
+      document.getElementById('r-email').classList.add('inp-ok');
+      showLookupStatus('found','Student found: '+result.student.name+'. Proceed to select event.');
+      document.getElementById('event-card').style.display='block';
+      buildEventDropdowns();
+    }
+    else if(result.status==='new'){
+      // Show name input
+      const nf=document.getElementById('name-field');if(nf)nf.classList.add('show');
+      const ni=document.getElementById('r-name');if(ni){ni.value='';ni.readOnly=false;ni.style.color='';}
+      document.getElementById('r-phone').classList.add('inp-ok');
+      document.getElementById('r-email').classList.add('inp-ok');
+      showLookupStatus('new','New student — please enter their name below.');
+      document.getElementById('event-card').style.display='block';
+      buildEventDropdowns();
+    }
+    else{
+      // mismatch or conflict
+      document.getElementById('r-phone').classList.add('inp-err');
+      document.getElementById('r-email').classList.add('inp-err');
+      showLookupStatus('err',result.error);
+      document.getElementById('event-card').style.display='none';
+    }
+  }catch(e){
+    showLookupStatus('err',e.message);
   }
-  // edit modal dropdown
-  const msel=document.getElementById('m-e-event');
-  if(msel){
-    msel.innerHTML='';
-    events.forEach(ev=>{msel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`;});
-  }
+  busy('btn-lookup',false,'Check →');
 }
 
 function onEventChange(){
@@ -883,7 +912,7 @@ function onEventChange(){
   const box=document.getElementById('amt-box');
   if(sel?.value&&opt?.dataset.cost){
     document.getElementById('amt-val').textContent=fmtMoney(opt.dataset.cost);
-    box.classList.add('show');
+    box?.classList.add('show');
   }else{box?.classList.remove('show');}
 }
 
@@ -892,20 +921,19 @@ function selectPay(m){
   document.getElementById('opt-cash')?.classList.toggle('sel',m==='cash');
   document.getElementById('opt-upi')?.classList.toggle('sel',m==='upi');
   const uf=document.getElementById('upi-field');
-  if(uf) uf.style.display=m==='upi'?'block':'none';
+  if(uf)uf.style.display=m==='upi'?'block':'none';
   if(m!=='upi'){const t=document.getElementById('r-txn');if(t)t.value='';}
 }
 
 async function submitReg(){
-  const name =document.getElementById('r-name')?.value.trim();
+  if(!lookupState){toast('Please check the student first.','err');return;}
   const phone=document.getElementById('r-phone')?.value.trim();
   const email=document.getElementById('r-email')?.value.trim();
+  const name =document.getElementById('r-name')?.value.trim();
   const evId =document.getElementById('r-event')?.value;
   const txn  =document.getElementById('r-txn')?.value.trim();
 
-  if(!name){toast('Enter student name.','err');return;}
-  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter valid 10-digit phone.','err');return;}
-  if(!email||!email.includes('@')){toast('Enter valid email.','err');return;}
+  if(!name){toast('Enter the student name.','err');return;}
   if(!evId){toast('Select an event.','err');return;}
   if(!selPay){toast('Select a payment method.','err');return;}
   if(selPay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
@@ -913,116 +941,145 @@ async function submitReg(){
   busy('reg-btn',true);
   try{
     await api('POST','/api/register',{name,phone,email,event_id:evId,payment_method:selPay,transaction_id:txn||null});
-    toast('✓ Student registered!');
-    clearRegForm();
+    toast('✓ Student registered successfully!');
+    // reset form
+    ['r-phone','r-email','r-name','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
+    resetLookup();
   }catch(e){toast(e.message,'err');}
   busy('reg-btn',false,'Register Student →');
 }
 
-function clearRegForm(){
-  ['r-name','r-phone','r-email','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const re=document.getElementById('r-event');if(re)re.value='';
-  document.getElementById('amt-box')?.classList.remove('show');
-  const uf=document.getElementById('upi-field');if(uf)uf.style.display='none';
-  document.getElementById('opt-cash')?.classList.remove('sel');
-  document.getElementById('opt-upi')?.classList.remove('sel');
-  selPay='';
+// ════════════════════════════════════════════════════════════════
+//  SALES TABLE (shared admin+member)
+// ════════════════════════════════════════════════════════════════
+function salesTableHTML(isAdmin){
+  const cols=isAdmin
+    ?'<th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>'
+    :'<th>Student</th><th>Event</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>';
+  return `
+  <div class="sec-hdr">
+    <div style="display:flex;align-items:center">
+      <span class="sec-title">${isAdmin?'All Registrations':'My Sales'}</span>
+      <span class="count" id="sales-count">0</span>
+    </div>
+    <button class="btn btn-sm" onclick="loadSales()">↺ Refresh</button>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr>${cols}</tr></thead>
+    <tbody id="sales-body"><tr><td colspan="${isAdmin?7:6}"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+  </table></div>`;}
+
+async function loadSales(){
+  const tbody=document.getElementById('sales-body');if(!tbody)return;
+  const isAdmin=session.role==='admin';
+  const cols=isAdmin?7:6;
+  tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">⏳</div></div></td></tr>`;
+  try{
+    const data=await api('GET','/api/sales');
+    salesCache={};data.forEach(r=>salesCache[r.id]=r);
+    const c=document.getElementById('sales-count');if(c)c.textContent=data.length;
+    if(!data.length){tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>`;return;}
+    const rows=data.map(r=>{
+      const tr=document.createElement('tr');
+      const pc=r.payment_method==='cash'?'pill-cash':'pill-upi';
+      const pt=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
+      const memCol=isAdmin?'<td class="mn" style="color:var(--muted)"></td>':'';
+      tr.innerHTML=`
+        <td><div style="font-weight:600" class="sn"></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:2px" class="sp"></div></td>
+        <td style="font-weight:500" class="et"></td>
+        ${memCol}
+        <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
+        <td><span class="pill ${pc}">${pt}</span>${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
+        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>
+        <td><div class="acts">
+          <button class="btn btn-blue" data-action="edit">Edit</button>
+          <button class="btn btn-red"  data-action="del">Delete</button>
+        </div></td>`;
+      tr.querySelector('.sn').textContent=r.Students.name;
+      tr.querySelector('.sp').textContent=r.Students.phone_number;
+      tr.querySelector('.et').textContent=r.Events.title;
+      if(isAdmin&&r.Members)tr.querySelector('.mn').textContent=r.Members.name;
+      if(r.transaction_id)tr.querySelector('.txn').textContent=r.transaction_id;
+      tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
+      tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
+      return tr;
+    });
+    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
+    // rebuild edit modal dropdowns after render
+    buildEventDropdowns();
+  }catch(e){toast(e.message,'err');}
 }
 
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  EDIT REGISTRATION
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 function openEditReg(r){
-  document.getElementById('m-edit-id').value=r.id;
-  document.getElementById('m-edit-stu-id').value=r.Students.id;
-  document.getElementById('m-e-name').value=r.Students.name;
-  document.getElementById('m-e-phone').value=r.Students.phone_number;
-  document.getElementById('m-e-email').value=r.Students.email;
-  document.getElementById('m-e-pay').value=r.payment_method;
-  document.getElementById('m-e-txn').value=r.transaction_id||'';
-  document.getElementById('m-edit-sub').textContent='Editing registration for '+r.Students.name;
-  const msel=document.getElementById('m-e-event');
+  document.getElementById('me-id').value=r.id;
+  document.getElementById('me-stu-id').value=r.Students.id;
+  document.getElementById('me-name').value=r.Students.name;
+  document.getElementById('me-phone').value=r.Students.phone_number;
+  document.getElementById('me-email').value=r.Students.email;
+  document.getElementById('me-pay').value=r.payment_method;
+  document.getElementById('me-txn').value=r.transaction_id||'';
+  document.getElementById('me-sub').textContent='Editing registration for '+r.Students.name;
+  const msel=document.getElementById('me-event');
   for(let i=0;i<msel.options.length;i++){if(msel.options[i].value===r.Events.id){msel.selectedIndex=i;break;}}
   toggleEditUPI();
   openM('m-edit');
 }
-
 function toggleEditUPI(){
-  const v=document.getElementById('m-e-pay')?.value;
-  const wrap=document.getElementById('m-e-txn-wrap');
-  if(wrap){wrap.style.display=v==='upi'?'flex':'none';wrap.style.flexDirection='column';}
-  if(v!=='upi'){const t=document.getElementById('m-e-txn');if(t)t.value='';}
+  const v=document.getElementById('me-pay')?.value;
+  const w=document.getElementById('me-txn-wrap');
+  if(w){w.style.display=v==='upi'?'flex':'none';w.style.flexDirection='column';}
+  if(v!=='upi'){const t=document.getElementById('me-txn');if(t)t.value='';}
 }
-
 async function saveEdit(){
-  const regId=document.getElementById('m-edit-id').value;
-  const stuId=document.getElementById('m-edit-stu-id').value;
-  const name=document.getElementById('m-e-name').value.trim();
-  const phone=document.getElementById('m-e-phone').value.trim();
-  const email=document.getElementById('m-e-email').value.trim();
-  const evId=document.getElementById('m-e-event').value;
-  const pay=document.getElementById('m-e-pay').value;
-  const txn=document.getElementById('m-e-txn').value.trim();
-
+  const regId=document.getElementById('me-id').value;
+  const stuId=document.getElementById('me-stu-id').value;
+  const name=document.getElementById('me-name').value.trim();
+  const phone=document.getElementById('me-phone').value.trim();
+  const email=document.getElementById('me-email').value.trim();
+  const evId=document.getElementById('me-event').value;
+  const pay=document.getElementById('me-pay').value;
+  const txn=document.getElementById('me-txn').value.trim();
   if(!name){toast('Enter name.','err');return;}
   if(!phone||phone.length!==10){toast('Enter 10-digit phone.','err');return;}
   if(!email||!email.includes('@')){toast('Enter valid email.','err');return;}
   if(pay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
-
   busy('btn-save-edit',true);
   try{
     await api('PUT','/api/sales/'+regId,{student_id:stuId,name,phone,email,event_id:evId,payment_method:pay,transaction_id:txn||null});
-    toast('✓ Registration updated.');
-    closeM('m-edit');
-    loadSales();
-    if(session.role==='admin') loadAdminOverview();
+    toast('✓ Registration updated.');closeM('m-edit');
+    loadSales();if(session.role==='admin')loadAdminOverview();
   }catch(e){toast(e.message,'err');}
   busy('btn-save-edit',false,'Save Changes');
 }
 
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  UNIVERSAL DELETE
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 function openDel(id,type,label){
-  document.getElementById('m-del-id').value=id;
-  document.getElementById('m-del-type').value=type;
-  document.getElementById('m-del-sub').textContent='Are you sure you want to delete '+label+'?';
+  document.getElementById('md-id').value=id;
+  document.getElementById('md-type').value=type;
+  document.getElementById('md-sub').textContent='Are you sure you want to delete '+label+'? This cannot be undone.';
   openM('m-del');
 }
-
 async function confirmDel(){
-  const id=document.getElementById('m-del-id').value;
-  const type=document.getElementById('m-del-type').value;
+  const id=document.getElementById('md-id').value;
+  const type=document.getElementById('md-type').value;
   busy('btn-del',true);
   try{
-    if(type==='registration') await api('DELETE','/api/sales/'+id);
-    else if(type==='member')  await api('DELETE','/api/members/'+id);
-    else if(type==='event')   await api('DELETE','/api/events/'+id);
-    toast('Deleted successfully.');
-    closeM('m-del');
-    if(type==='registration'){ loadSales(); if(session.role==='admin')loadAdminOverview(); }
-    if(type==='member')  loadMembers();
-    if(type==='event'){  loadEventsTable(); await loadEventsCache(); buildEventDropdowns(); }
+    if(type==='registration')await api('DELETE','/api/sales/'+id);
+    else if(type==='member') await api('DELETE','/api/members/'+id);
+    else if(type==='event')  await api('DELETE','/api/events/'+id);
+    else if(type==='student')await api('DELETE','/api/students/'+id);
+    toast('Deleted successfully.');closeM('m-del');
+    if(type==='registration'){loadSales();if(session.role==='admin')loadAdminOverview();}
+    if(type==='member')loadMembers();
+    if(type==='event'){loadEventsTable();loadEventsCache().then(buildEventDropdowns);}
+    if(type==='student')loadStudents();
   }catch(e){toast(e.message,'err');}
-  busy('btn-del',true,'Delete');
   busy('btn-del',false,'Delete');
-}
-
-// ════════════════════════════════════════════════════
-//  TAB SWITCHING
-// ════════════════════════════════════════════════════
-function switchTab(name,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  const panel=document.getElementById('panel-'+name);
-  if(panel) panel.classList.add('active');
-  // lazy load on tab switch
-  if(name==='sales'||name==='registrations') loadSales();
-  if(name==='members')  loadMembers();
-  if(name==='events')   loadEventsTable();
-  if(name==='overview') loadAdminOverview();
-  if(name==='register') buildEventDropdowns();
 }
 </script>
 </body>
