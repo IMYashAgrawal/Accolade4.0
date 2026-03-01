@@ -290,23 +290,30 @@ app.post('/api/register', requireAuth, async (req, res) => {
   if (!isEmail(email))  return res.status(400).json({ error: 'Invalid email.' });
   if (!Array.isArray(event_ids) || event_ids.some(id => !isUUID(id)))
     return res.status(400).json({ error: 'Invalid event selection.' });
-  if (!['cash','upi'].includes(payment_method)) return res.status(400).json({ error: 'Invalid payment method.' });
-  if (payment_method === 'upi' && !transaction_id) return res.status(400).json({ error: 'UPI transaction ID required.' });
+  if (!['cash','upi'].includes(payment_method))
+    return res.status(400).json({ error: 'Invalid payment method.' });
+  if (payment_method === 'upi' && !transaction_id)
+    return res.status(400).json({ error: 'UPI transaction ID required.' });
 
-  const cleanName     = sanitize(name);
-  const cleanEmail    = sanitize(email).toLowerCase();
-  const cleanStudId   = sanitize(student_id).toUpperCase();
-  const cleanTxn      = transaction_id ? sanitize(transaction_id) : null;
+  const cleanName   = sanitize(name);
+  const cleanEmail  = sanitize(email).toLowerCase();
+  const cleanStudId = sanitize(student_id).toUpperCase();
+  const cleanTxn    = payment_method === 'upi' ? sanitize(transaction_id) : null;
 
-  // Get all event costs
-  const { data: eventsData, error: evErr } = await db
-    .from('Events').select('id, cost').in('id', event_ids);
-  if (evErr || !eventsData?.length) return res.status(400).json({ error: 'One or more events not found.' });
+  const { data: eventsData } = await db
+    .from('Events')
+    .select('id, cost')
+    .in('id', event_ids);
 
-  // Upsert student by student_id
+  if (!eventsData?.length)
+    return res.status(400).json({ error: 'One or more events not found.' });
+
+  // ───── UPSERT STUDENT ─────
   let studentDbId;
   const { data: existing } = await db.from('Students')
-    .select('id').eq('student_id', cleanStudId).maybeSingle();
+    .select('id')
+    .eq('student_id', cleanStudId)
+    .maybeSingle();
 
   if (existing) {
     studentDbId = existing.id;
@@ -316,15 +323,31 @@ app.post('/api/register', requireAuth, async (req, res) => {
   } else {
     const { data: newStu, error: stuErr } = await db.from('Students')
       .insert({ student_id: cleanStudId, name: cleanName, email: cleanEmail, phone_number: String(phone) })
-      .select().single();
-    if (stuErr) {
-      if (stuErr.code === '23505') return res.status(400).json({ error: 'Phone or email already used by another student.' });
-      return res.status(500).json({ error: 'Failed to save student.' });
-    }
+      .select()
+      .single();
+
+    if (stuErr)
+      return res.status(400).json({ error: stuErr.message });
+
     studentDbId = newStu.id;
   }
 
-  // Check which of the requested events the student is ALREADY registered for
+  // ───── TRANSACTION VALIDATION ─────
+  if (cleanTxn) {
+    const { data: existingTxn } = await db
+      .from('Registrations')
+      .select('student_id')
+      .eq('transaction_id', cleanTxn)
+      .limit(1);
+
+    if (existingTxn.length > 0 && existingTxn[0].student_id !== studentDbId) {
+      return res.status(400).json({
+        error: 'This transaction ID is already used by another student.'
+      });
+    }
+  }
+
+  // ───── FILTER ALREADY REGISTERED EVENTS ─────
   const { data: existingRegs } = await db
     .from('Registrations')
     .select('event_id')
@@ -334,27 +357,26 @@ app.post('/api/register', requireAuth, async (req, res) => {
   const alreadyRegistered = new Set((existingRegs || []).map(r => r.event_id));
   const newEventIds = event_ids.filter(eid => !alreadyRegistered.has(eid));
 
-  if (newEventIds.length === 0) {
-    return res.status(400).json({ error: 'Student is already registered for all selected events.' });
-  }
+  if (newEventIds.length === 0)
+    return res.status(400).json({ error: 'Student already registered for selected events.' });
 
-  // Insert only for events not already registered
   const eventMap = Object.fromEntries(eventsData.map(e => [e.id, e.cost]));
+
   const registrations = newEventIds.map(eid => ({
     student_id:     studentDbId,
     event_id:       eid,
     member_id:      req.user.id,
     payment_method,
-    transaction_id: payment_method === 'upi' ? cleanTxn : null,
+    transaction_id: cleanTxn,
     amount_paid:    eventMap[eid]
   }));
 
   const { error: regErr } = await db.from('Registrations').insert(registrations);
-  if (regErr) {
-    return res.status(500).json({ error: 'Failed to create registration: ' + regErr.message });
-  }
-  const skipped = alreadyRegistered.size;
-  res.json({ ok: true, count: registrations.length, skipped });
+
+  if (regErr)
+    return res.status(500).json({ error: regErr.message });
+
+  res.json({ ok: true });
 });
 
 app.put('/api/sales/:id', requireAuth, async (req, res) => {
@@ -375,6 +397,24 @@ app.put('/api/sales/:id', requireAuth, async (req, res) => {
 
   const { data: evData } = await db.from('Events').select('cost').eq('id', event_id).single();
   if (!evData) return res.status(400).json({ error: 'Event not found.' });
+
+  // Validate transaction when editing
+  if (payment_method === 'upi') {
+    const cleanTxn = sanitize(transaction_id);
+
+    const { data: existingTxn } = await db
+      .from('Registrations')
+      .select('student_id')
+      .eq('transaction_id', cleanTxn)
+      .neq('id', id)
+      .limit(1);
+
+    if (existingTxn.length > 0 && existingTxn[0].student_id !== student_id) {
+      return res.status(400).json({
+        error: 'This transaction ID is already used by another student.'
+      });
+    }
+  }
 
   await db.from('Students').update({
     name: sanitize(name), phone_number: String(phone), email: sanitize(email).toLowerCase()
