@@ -13,10 +13,10 @@ if (!SUPABASE_URL || !SUPABASE_KEY) { console.error('Missing env vars.'); proces
 
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── Sessions ─────────────────────────────────────────────────────
+// ── Sessions ──────────────────────────────────────────────────────
 const sessions = new Map();
-function makeToken()  { return crypto.randomBytes(32).toString('hex'); }
-function sha256(str)  { return crypto.createHash('sha256').update(str).digest('hex'); }
+function makeToken() { return crypto.randomBytes(32).toString('hex'); }
+function sha256(str) { return crypto.createHash('sha256').update(str).digest('hex'); }
 
 function requireAuth(req, res, next) {
   const token = req.headers['x-session'];
@@ -24,22 +24,20 @@ function requireAuth(req, res, next) {
   req.user = sessions.get(token);
   next();
 }
-
 function requireAdmin(req, res, next) {
-  // Role checked on the SERVER — browser JS cannot bypass this
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required.' });
   next();
 }
 
-// ── Validators ───────────────────────────────────────────────────
+// ── Validators ────────────────────────────────────────────────────
 function isUUID(v)  { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v)); }
 function isPhone(v) { return /^\d{10}$/.test(String(v)); }
 function isEmail(v) { return typeof v === 'string' && v.includes('@') && v.length <= 254; }
 function sanitize(v){ return String(v).trim().replace(/[<>"'`]/g, '').slice(0, 500); }
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  AUTH
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
@@ -56,10 +54,8 @@ app.post('/api/login', async (req, res) => {
   if (error || !data) return res.status(401).json({ error: 'Invalid email or password.' });
 
   const token = makeToken();
-  // Role is set HERE on the server at login — cannot be changed from browser
   sessions.set(token, { id: data.id, name: data.name, email: data.email, role: data.role });
   setTimeout(() => sessions.delete(token), 12 * 60 * 60 * 1000);
-
   res.json({ token, name: data.name, role: data.role });
 });
 
@@ -68,72 +64,60 @@ app.post('/api/logout', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ════════════════════════════════════════════════════════════════
-//  STUDENT LOOKUP — called before registration form submits
-//  Returns what was found so the frontend can guide the user
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  STUDENT LOOKUP — by student_id (college roll number etc.)
+//  phone & email still must be unique, checked separately
+// ════════════════════════════════════════════════════════
 
 app.post('/api/students/lookup', requireAuth, async (req, res) => {
-  const phone = String(req.body.phone || '').trim();
-  const email = String(req.body.email || '').trim().toLowerCase();
+  const studentId = sanitize(req.body.student_id || '').toUpperCase();
+  const phone     = String(req.body.phone || '').trim();
+  const email     = String(req.body.email || '').trim().toLowerCase();
 
-  if (!isPhone(phone)) return res.status(400).json({ error: 'Enter a valid 10-digit phone number.' });
-  if (!isEmail(email)) return res.status(400).json({ error: 'Enter a valid email address.' });
+  if (!studentId) return res.status(400).json({ error: 'Enter a Student ID.' });
 
-  // Look up by phone AND by email separately
-  const [byPhone, byEmail] = await Promise.all([
-    db.from('Students').select('id, name, phone_number, email').eq('phone_number', phone).maybeSingle(),
-    db.from('Students').select('id, name, phone_number, email').eq('email', email).maybeSingle()
-  ]);
+  // Primary lookup: by student_id
+  const { data: byId } = await db
+    .from('Students')
+    .select('id, name, student_id, phone_number, email')
+    .eq('student_id', studentId)
+    .maybeSingle();
 
-  const foundByPhone = byPhone.data;
-  const foundByEmail = byEmail.data;
-
-  // ── Case 1: Both found and it's the SAME student ──
-  if (foundByPhone && foundByEmail && foundByPhone.id === foundByEmail.id) {
-    return res.json({ status: 'found', student: foundByPhone });
+  if (byId) {
+    return res.json({ status: 'found', student: byId });
   }
 
-  // ── Case 2: Phone found, email found but DIFFERENT students ──
-  if (foundByPhone && foundByEmail && foundByPhone.id !== foundByEmail.id) {
+  // Not found — new student. But check phone & email aren't taken by someone else
+  const checks = [];
+  if (phone) checks.push(db.from('Students').select('id, student_id').eq('phone_number', phone).maybeSingle());
+  if (email) checks.push(db.from('Students').select('id, student_id').eq('email', email).maybeSingle());
+
+  const results = await Promise.all(checks);
+  const takenPhone = phone ? results[0]?.data : null;
+  const takenEmail = email ? results[checks.length - 1]?.data : null;
+
+  if (takenPhone) {
     return res.json({
       status: 'conflict',
-      error: 'This phone number and email belong to different students. Please use matching details.'
+      error: `Phone number already belongs to student ID: ${takenPhone.student_id}. Please use the correct Student ID.`
     });
   }
-
-  // ── Case 3: Phone found but email doesn't match ──
-  if (foundByPhone && !foundByEmail) {
+  if (takenEmail) {
     return res.json({
-      status: 'mismatch',
-      error: `This phone number is registered with a different email (${maskEmail(foundByPhone.email)}). Please use the correct email.`
+      status: 'conflict',
+      error: `Email already belongs to student ID: ${takenEmail.student_id}. Please use the correct Student ID.`
     });
   }
 
-  // ── Case 4: Email found but phone doesn't match ──
-  if (!foundByPhone && foundByEmail) {
-    return res.json({
-      status: 'mismatch',
-      error: `This email is registered with a different phone number. Please use the correct phone number.`
-    });
-  }
-
-  // ── Case 5: Neither found — new student, ask for name ──
   return res.json({ status: 'new' });
 });
 
-// Mask email for privacy: pr***@gmail.com
-function maskEmail(email) {
-  const [user, domain] = email.split('@');
-  return user.slice(0, 2) + '***@' + domain;
-}
-
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  EVENTS
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 
 app.get('/api/events', requireAuth, async (req, res) => {
-  const { data, error } = await db.from('Events').select('id, title, cost').order('title');
+  const { data, error } = await db.from('Events').select('id, title, cost, created_at').order('title');
   if (error) return res.status(500).json({ error: 'Failed to load events.' });
   res.json(data);
 });
@@ -141,7 +125,7 @@ app.get('/api/events', requireAuth, async (req, res) => {
 app.post('/api/events', requireAuth, requireAdmin, async (req, res) => {
   const title = sanitize(req.body.title || '');
   const cost  = parseFloat(req.body.cost);
-  if (!title)           return res.status(400).json({ error: 'Title is required.' });
+  if (!title)              return res.status(400).json({ error: 'Title is required.' });
   if (isNaN(cost)||cost<=0) return res.status(400).json({ error: 'Cost must be > 0.' });
   const { error } = await db.from('Events').insert({ title, cost });
   if (error) return res.status(500).json({ error: error.message });
@@ -166,9 +150,9 @@ app.delete('/api/events/:id', requireAuth, requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  MEMBERS (admin only)
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 
 app.get('/api/members', requireAuth, requireAdmin, async (req, res) => {
   const { data, error } = await db
@@ -179,14 +163,14 @@ app.get('/api/members', requireAuth, requireAdmin, async (req, res) => {
 });
 
 app.post('/api/members', requireAuth, requireAdmin, async (req, res) => {
-  const name  = sanitize(req.body.name || '');
-  const email = sanitize(req.body.email || '').toLowerCase();
-  const pw    = String(req.body.password || '');
-  const role  = req.body.role === 'admin' ? 'admin' : 'member';
+  const name    = sanitize(req.body.name || '');
+  const email   = sanitize(req.body.email || '').toLowerCase();
+  const pw      = String(req.body.password || '');
+  const role    = req.body.role === 'admin' ? 'admin' : 'member';
+  const phone_m = String(req.body.phone || '').trim();
   if (!name)           return res.status(400).json({ error: 'Name is required.' });
   if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
   if (pw.length < 8)   return res.status(400).json({ error: 'Password must be at least 8 characters.' });
-  const phone_m = String(req.body.phone || '').trim();
   if (phone_m && !isPhone(phone_m)) return res.status(400).json({ error: 'Member phone must be 10 digits.' });
   const { error } = await db.from('Members').insert({ name, email, password: sha256(pw), role, phone_number: phone_m || null });
   if (error) {
@@ -231,13 +215,13 @@ app.delete('/api/members/:id', requireAuth, requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  STUDENTS (admin only)
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 
 app.get('/api/students', requireAuth, requireAdmin, async (req, res) => {
   const { data, error } = await db
-    .from('Students').select('id, name, phone_number, email, created_at')
+    .from('Students').select('id, student_id, name, phone_number, email, created_at')
     .order('created_at', { ascending: false });
   if (error) return res.status(500).json({ error: 'Failed to load students.' });
   res.json(data);
@@ -246,16 +230,18 @@ app.get('/api/students', requireAuth, requireAdmin, async (req, res) => {
 app.put('/api/students/:id', requireAuth, requireAdmin, async (req, res) => {
   const { id } = req.params;
   if (!isUUID(id)) return res.status(400).json({ error: 'Invalid ID.' });
-  const name  = sanitize(req.body.name  || '');
-  const phone = String(req.body.phone   || '').trim();
-  const email = sanitize(req.body.email || '').toLowerCase();
+  const name       = sanitize(req.body.name  || '');
+  const phone      = String(req.body.phone   || '').trim();
+  const email      = sanitize(req.body.email || '').toLowerCase();
+  const student_id = sanitize(req.body.student_id || '').toUpperCase();
   if (!name)           return res.status(400).json({ error: 'Name is required.' });
   if (!isPhone(phone)) return res.status(400).json({ error: 'Phone must be 10 digits.' });
   if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
+  if (!student_id)     return res.status(400).json({ error: 'Student ID is required.' });
   const { error } = await db.from('Students')
-    .update({ name, phone_number: phone, email }).eq('id', id);
+    .update({ name, phone_number: phone, email, student_id }).eq('id', id);
   if (error) {
-    if (error.code === '23505') return res.status(400).json({ error: 'Phone or email already used by another student.' });
+    if (error.code === '23505') return res.status(400).json({ error: 'Phone, email, or Student ID already used by another student.' });
     return res.status(500).json({ error: error.message });
   }
   res.json({ ok: true });
@@ -269,14 +255,14 @@ app.delete('/api/students/:id', requireAuth, requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  REGISTRATIONS
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 
 app.get('/api/sales', requireAuth, async (req, res) => {
   let query = db.from('Registrations')
     .select(`id, payment_method, transaction_id, amount_paid, registered_at,
-      Students ( id, name, phone_number, email ),
+      Students ( id, student_id, name, phone_number, email ),
       Events   ( id, title, cost ),
       Members  ( id, name, phone_number )`)
     .order('registered_at', { ascending: false });
@@ -286,50 +272,67 @@ app.get('/api/sales', requireAuth, async (req, res) => {
   res.json(data);
 });
 
+// POST /api/register — supports multiple events in one call
 app.post('/api/register', requireAuth, async (req, res) => {
-  const { name, phone, email, event_id, payment_method, transaction_id } = req.body;
-  if (!name || !phone || !email || !event_id || !payment_method)
+  const { student_id, name, phone, email, event_ids, payment_method, transaction_id } = req.body;
+
+  if (!student_id || !name || !phone || !email || !event_ids?.length || !payment_method)
     return res.status(400).json({ error: 'Missing required fields.' });
   if (!isPhone(phone))  return res.status(400).json({ error: 'Phone must be 10 digits.' });
   if (!isEmail(email))  return res.status(400).json({ error: 'Invalid email.' });
-  if (!isUUID(event_id))return res.status(400).json({ error: 'Invalid event.' });
+  if (!Array.isArray(event_ids) || event_ids.some(id => !isUUID(id)))
+    return res.status(400).json({ error: 'Invalid event selection.' });
   if (!['cash','upi'].includes(payment_method)) return res.status(400).json({ error: 'Invalid payment method.' });
-  if (payment_method==='upi' && !transaction_id) return res.status(400).json({ error: 'UPI transaction ID required.' });
+  if (payment_method === 'upi' && !transaction_id) return res.status(400).json({ error: 'UPI transaction ID required.' });
 
-  const cleanName  = sanitize(name);
-  const cleanEmail = sanitize(email).toLowerCase();
-  const cleanTxn   = transaction_id ? sanitize(transaction_id) : null;
+  const cleanName     = sanitize(name);
+  const cleanEmail    = sanitize(email).toLowerCase();
+  const cleanStudId   = sanitize(student_id).toUpperCase();
+  const cleanTxn      = transaction_id ? sanitize(transaction_id) : null;
 
-  const { data: evData } = await db.from('Events').select('cost').eq('id', event_id).single();
-  if (!evData) return res.status(400).json({ error: 'Event not found.' });
+  // Get all event costs
+  const { data: eventsData, error: evErr } = await db
+    .from('Events').select('id, cost').in('id', event_ids);
+  if (evErr || !eventsData?.length) return res.status(400).json({ error: 'One or more events not found.' });
 
-  // At this point the lookup already validated phone+email pair — just upsert by phone
-  let studentId;
-  const { data: existing } = await db.from('Students').select('id').eq('phone_number', String(phone)).maybeSingle();
+  // Upsert student by student_id
+  let studentDbId;
+  const { data: existing } = await db.from('Students')
+    .select('id').eq('student_id', cleanStudId).maybeSingle();
+
   if (existing) {
-    studentId = existing.id;
-    await db.from('Students').update({ name: cleanName, email: cleanEmail }).eq('id', studentId);
+    studentDbId = existing.id;
+    await db.from('Students')
+      .update({ name: cleanName, email: cleanEmail, phone_number: String(phone) })
+      .eq('id', studentDbId);
   } else {
     const { data: newStu, error: stuErr } = await db.from('Students')
-      .insert({ name: cleanName, email: cleanEmail, phone_number: String(phone) }).select().single();
+      .insert({ student_id: cleanStudId, name: cleanName, email: cleanEmail, phone_number: String(phone) })
+      .select().single();
     if (stuErr) {
-      if (stuErr.code === '23505') return res.status(400).json({ error: 'Email already used by another student.' });
+      if (stuErr.code === '23505') return res.status(400).json({ error: 'Phone or email already used by another student.' });
       return res.status(500).json({ error: 'Failed to save student.' });
     }
-    studentId = newStu.id;
+    studentDbId = newStu.id;
   }
 
-  const { error: regErr } = await db.from('Registrations').insert({
-    student_id: studentId, event_id,
-    member_id:  req.user.id, payment_method,
-    transaction_id: payment_method==='upi' ? cleanTxn : null,
-    amount_paid: evData.cost
-  });
+  // Insert one registration per event
+  const eventMap = Object.fromEntries(eventsData.map(e => [e.id, e.cost]));
+  const registrations = event_ids.map(eid => ({
+    student_id:     studentDbId,
+    event_id:       eid,
+    member_id:      req.user.id,
+    payment_method,
+    transaction_id: payment_method === 'upi' ? cleanTxn : null,
+    amount_paid:    eventMap[eid]
+  }));
+
+  const { error: regErr } = await db.from('Registrations').insert(registrations);
   if (regErr) {
-    if (regErr.code === '23505') return res.status(400).json({ error: 'Student already registered for this event.' });
+    if (regErr.code === '23505') return res.status(400).json({ error: 'Student already registered for one or more of these events.' });
     return res.status(500).json({ error: 'Failed to create registration.' });
   }
-  res.json({ ok: true });
+  res.json({ ok: true, count: registrations.length });
 });
 
 app.put('/api/sales/:id', requireAuth, async (req, res) => {
@@ -345,7 +348,6 @@ app.put('/api/sales/:id', requireAuth, async (req, res) => {
 
   const { data: check } = await db.from('Registrations').select('member_id').eq('id', id).single();
   if (!check) return res.status(404).json({ error: 'Not found.' });
-  // Server enforces: member can only edit own; admin can edit any
   if (req.user.role !== 'admin' && check.member_id !== req.user.id)
     return res.status(403).json({ error: 'Not authorized.' });
 

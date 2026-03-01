@@ -6,11 +6,11 @@
 <title>Accolade 4.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#0d0d12;--s1:#13131a;--s2:#1a1a24;--s3:#222230;
   --border:#2a2a3a;--border2:#333345;
   --accent:#6c63ff;--accent-h:#8b85ff;
-  --red:#ff4d6d;--green:#00c896;--gold:#f4a034;--blue:#3b9eff;--warn:#ffb347;
+  --red:#ff4d6d;--green:#00c896;--gold:#f4a034;--blue:#3b9eff;
   --text:#eeeef5;--muted:#7070a0;--dim:#404060;
   --fh:'Outfit',sans-serif;--fm:'JetBrains Mono',monospace;
   --r:12px;--r2:8px;--glow:0 0 30px rgba(108,99,255,0.15);
@@ -62,10 +62,10 @@ select option{background:var(--s2);}
 .btn-blue:hover{background:var(--blue);color:#fff;}
 .btn-sm{font-size:12px;padding:7px 13px;background:var(--s3);border:1px solid var(--border);color:var(--muted);}
 .btn-sm:hover{border-color:var(--accent);color:var(--text);}
-.btn-green{background:var(--green);color:#000;font-size:13px;padding:10px 22px;}
+.btn-green{background:var(--green);color:#000;font-size:13px;padding:10px 22px;font-weight:700;}
 .btn-green:hover{background:#00e0aa;}
 
-/* APP */
+/* APP SHELL */
 #app{display:none;min-height:100vh;position:relative;z-index:1;}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:rgba(13,13,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;}
 .topbar-left{display:flex;align-items:center;gap:12px;}
@@ -80,7 +80,6 @@ select option{background:var(--s2);}
 .tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .tab:hover:not(.active){color:var(--text);}
 
-/* CONTENT */
 .content{padding:28px;max-width:1080px;margin:0 auto;}
 .panel{display:none;animation:riseIn .3s ease;}
 .panel.active{display:block;}
@@ -101,8 +100,7 @@ select option{background:var(--s2);}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;}
 .mt{margin-top:14px;}
 
-/* STUDENT LOOKUP */
-.lookup-box{background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
+/* LOOKUP */
 .lookup-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;}
 .lookup-status{margin-top:14px;padding:12px 16px;border-radius:var(--r2);font-size:13px;font-weight:500;display:none;align-items:center;gap:10px;}
 .lookup-status.show{display:flex;}
@@ -112,6 +110,21 @@ select option{background:var(--s2);}
 .ls-icon{font-size:18px;flex-shrink:0;}
 .name-field{margin-top:14px;display:none;animation:riseIn .2s ease;}
 .name-field.show{display:block;}
+
+/* MULTI-EVENT SELECTOR */
+.ev-search-wrap{position:relative;margin-bottom:10px;}
+.ev-search-wrap input{padding-right:36px;}
+.ev-list{max-height:220px;overflow-y:auto;border:1.5px solid var(--border);border-radius:var(--r2);background:var(--s2);}
+.ev-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(42,42,58,.4);}
+.ev-item:last-child{border-bottom:none;}
+.ev-item:hover{background:rgba(108,99,255,.07);}
+.ev-item.selected{background:rgba(108,99,255,.12);}
+.ev-cb{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;}
+.ev-label{font-size:13px;font-weight:500;flex:1;}
+.ev-cost{font-family:var(--fm);font-size:12px;color:var(--green);}
+.selected-events{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.ev-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);color:var(--accent-h);font-size:12px;padding:4px 10px;border-radius:20px;}
+.ev-tag button{background:none;border:none;color:var(--accent-h);cursor:pointer;font-size:14px;padding:0;line-height:1;}
 
 /* AMOUNT BOX */
 .amt-box{background:linear-gradient(135deg,rgba(0,200,150,.12),rgba(0,200,150,.04));border:1px solid rgba(0,200,150,.25);border-radius:var(--r2);padding:14px 18px;display:none;align-items:center;justify-content:space-between;margin-top:14px;}
@@ -128,7 +141,7 @@ select option{background:var(--s2);}
 #upi-field{display:none;margin-top:14px;animation:riseIn .2s ease;}
 
 /* TABLE */
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .sec-title{font-size:18px;font-weight:700;letter-spacing:-.02em;}
 .count{font-family:var(--fm);font-size:11px;color:var(--muted);background:var(--s3);border-radius:20px;padding:3px 10px;margin-left:8px;}
 .tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
@@ -145,15 +158,13 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
 .pill-member{background:rgba(0,200,150,.1);color:var(--green);}
 .empty{text-align:center;padding:48px 20px;color:var(--muted);}
 .empty .ei{font-size:36px;margin-bottom:10px;opacity:.3;}
-
-/* SEARCH BAR */
-.search-bar{display:flex;gap:10px;margin-bottom:16px;}
-.search-bar input{max-width:320px;}
+.search-bar{margin-bottom:14px;}
+.search-bar input{max-width:340px;}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;width:100%;max-width:500px;box-shadow:var(--glow);animation:riseIn .25s cubic-bezier(.22,1,.36,1);}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;width:100%;max-width:500px;box-shadow:var(--glow);animation:riseIn .25s cubic-bezier(.22,1,.36,1);max-height:90vh;overflow-y:auto;}
 .modal h2{font-size:18px;font-weight:700;margin-bottom:4px;}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
 .modal-footer{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
@@ -168,8 +179,7 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
 @keyframes riseIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
 @media(max-width:700px){
-  .row2,.row3,.stats-row{grid-template-columns:1fr;}
-  .lookup-row{grid-template-columns:1fr;} 
+  .row2,.row3,.stats-row,.lookup-row{grid-template-columns:1fr;}
   .content{padding:16px;}
   .topbar,.tabs{padding:0 14px;}
   .pay-grid{grid-template-columns:1fr;}
@@ -228,9 +238,7 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
       <div class="fg0"><label>Full Name</label><input type="text" id="mm-name" placeholder="Rahul Sharma"></div>
       <div class="fg0"><label>Phone Number</label><input type="tel" id="mm-phone" placeholder="9876543210" maxlength="10"></div>
     </div>
-    <div class="fg0" style="margin-bottom:14px">
-      <label>Email</label><input type="email" id="mm-email" placeholder="rahul@example.com">
-    </div>
+    <div class="fg0" style="margin-bottom:14px"><label>Email</label><input type="email" id="mm-email" placeholder="rahul@example.com"></div>
     <div class="row2">
       <div class="fg0">
         <label>Password <span id="pw-hint" style="font-size:10px;color:var(--dim);display:none">(blank = keep current)</span></label>
@@ -253,8 +261,9 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
     <h2>Edit Student</h2>
     <p class="modal-sub" id="ms-sub"></p>
     <input type="hidden" id="ms-id">
+    <div class="fg0" style="margin-bottom:14px"><label>Student ID</label><input type="text" id="ms-sid" placeholder="e.g. CS2024001" style="font-family:var(--fm)"></div>
     <div class="fg0" style="margin-bottom:14px"><label>Full Name</label><input type="text" id="ms-name"></div>
-    <div class="row2" style="margin-bottom:14px">
+    <div class="row2">
       <div class="fg0"><label>Phone</label><input type="tel" id="ms-phone" maxlength="10"></div>
       <div class="fg0"><label>Email</label><input type="email" id="ms-email"></div>
     </div>
@@ -307,7 +316,7 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
   </div>
 </div>
 
-<!-- MODAL: Confirm Delete -->
+<!-- MODAL: Delete -->
 <div class="overlay" id="m-del">
   <div class="modal">
     <h2>Confirm Delete</h2>
@@ -324,16 +333,34 @@ tbody tr:hover td{background:rgba(108,99,255,.04);}
 <div id="toast"></div>
 
 <script>
-// ══ STATE ═══════════════════════════════════════════════════════
-let session    = null;
-let eventsCache= {};
-let salesCache = {};
-let selPay     = '';
-let lookupState= null; // { status, student? }
+// ══ STATE ══════════════════════════════════════════════════════
+let session     = null;
+let eventsCache = {};   // id → event
+let salesCache  = {};
+let allStudents = [];
+let allMembers  = [];
+let allSales    = [];
+let selPay      = '';
+let lookupState = null;
+let selectedEventIds = new Set();
+let refreshTimer = null;
 
-// ══ UTILS ════════════════════════════════════════════════════════
+// ══ UTILS ══════════════════════════════════════════════════════
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function fmtDate(ts){return new Date(ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+
+// FIX: robust date formatter — handles ISO strings and timestamps
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Kolkata'});
+}
+function fmtDateTime(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'});
+}
 function fmtMoney(v){return '₹'+parseFloat(v).toFixed(2);}
 
 let _tt;
@@ -360,11 +387,47 @@ async function api(method,path,body){
   if(body)opts.body=JSON.stringify(body);
   const res=await fetch(path,opts);
   const json=await res.json();
+  // FIX: if session expired, go back to login without forcing page reload
+  if(res.status===401){
+    if(session){ stopAutoRefresh(); showLogin(); }
+    throw new Error('Session expired. Please sign in again.');
+  }
   if(!res.ok)throw new Error(json.error||'Request failed');
   return json;
 }
 
-// ══ LOGIN ════════════════════════════════════════════════════════
+// ── Session expired handler ────────────────────────────────────
+function showLogin(){
+  session=null;selPay='';eventsCache={};salesCache={};lookupState=null;
+  selectedEventIds=new Set();
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('l-email').value='';
+  document.getElementById('l-pw').value='';
+  document.getElementById('login-err').style.display='none';
+  document.getElementById('tabs-bar').innerHTML='';
+  document.getElementById('main-content').innerHTML='';
+}
+
+// ══ AUTO-REFRESH ══════════════════════════════════════════════
+// FIX: refreshes data every 30s without logging out
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshTimer = setInterval(()=>{
+    if(!session) return;
+    const activeTab = document.querySelector('.tab.active');
+    if(!activeTab) return;
+    const tabName = activeTab.getAttribute('onclick')?.match(/switchTab\('(\w+)'/)?.[1];
+    if(tabName==='sales'||tabName==='registrations') loadSales(true);
+    else if(tabName==='members')  loadMembers(true);
+    else if(tabName==='students') loadStudents(true);
+    else if(tabName==='events')   loadEventsTable(true);
+    else if(tabName==='overview') loadAdminOverview(true);
+  }, 30000);
+}
+function stopAutoRefresh(){ clearInterval(refreshTimer); refreshTimer=null; }
+
+// ══ LOGIN ══════════════════════════════════════════════════════
 ['l-pw','l-email'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
 
 async function doLogin(){
@@ -384,57 +447,51 @@ async function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     await loadEventsCache();
-    if(data.role==='admin')buildAdmin();
+    if(data.role==='admin') buildAdmin();
     else buildMember();
+    startAutoRefresh();
   }catch(e){errEl.textContent=e.message;errEl.style.display='block';}
   busy('login-btn',false,'Sign In');
 }
 
 async function doLogout(){
   try{await api('POST','/api/logout');}catch(e){}
-  session=null;selPay='';eventsCache={};salesCache={};lookupState=null;
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('l-email').value='';document.getElementById('l-pw').value='';
-  document.getElementById('login-err').style.display='none';
-  document.getElementById('tabs-bar').innerHTML='';
-  document.getElementById('main-content').innerHTML='';
+  stopAutoRefresh();
+  showLogin();
 }
 
-// ══ EVENTS CACHE ════════════════════════════════════════════════
+// ══ EVENTS CACHE ══════════════════════════════════════════════
 async function loadEventsCache(){
   try{
     const data=await api('GET','/api/events');
     eventsCache={};data.forEach(ev=>eventsCache[ev.id]=ev);
-  }catch(e){console.error('events',e);}
+  }catch(e){console.error('events cache',e);}
 }
 
-function buildEventDropdowns(){
+// FIX: edit modal dropdown (plain select, no search needed)
+function buildEditEventDropdown(){
   const evs=Object.values(eventsCache);
-  const sel=document.getElementById('r-event');
-  if(sel){sel.innerHTML='<option value="">-- Choose an event --</option>';
-    evs.forEach(ev=>sel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`);}
   const msel=document.getElementById('me-event');
-  if(msel){msel.innerHTML='';evs.forEach(ev=>msel.innerHTML+=`<option value="${esc(ev.id)}" data-cost="${ev.cost}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`);}
+  if(msel){msel.innerHTML='';evs.forEach(ev=>msel.innerHTML+=`<option value="${esc(ev.id)}">${esc(ev.title)} — ₹${parseFloat(ev.cost).toFixed(2)}</option>`);}
 }
 
-// ══ TAB SWITCHING ════════════════════════════════════════════════
+// ══ TAB SWITCHING ════════════════════════════════════════════
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   const p=document.getElementById('panel-'+name);if(p)p.classList.add('active');
-  if(name==='sales'||name==='registrations')loadSales();
-  if(name==='members')loadMembers();
-  if(name==='students')loadStudents();
-  if(name==='events')loadEventsTable();
-  if(name==='overview')loadAdminOverview();
-  if(name==='register'){buildEventDropdowns();resetLookup();}
+  if(name==='sales'||name==='registrations') loadSales();
+  if(name==='members')  loadMembers();
+  if(name==='students') loadStudents();
+  if(name==='events')   loadEventsTable();
+  if(name==='overview') loadAdminOverview();
+  if(name==='register'){ resetRegForm(); }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  ADMIN
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function buildAdmin(){
   document.getElementById('tabs-bar').innerHTML=`
     <button class="tab active" type="button" onclick="switchTab('overview',this)">📊 Overview</button>
@@ -451,10 +508,9 @@ function buildAdmin(){
     <div id="panel-events"        class="panel">${eventsHTML()}</div>
     <div id="panel-register"      class="panel">${registerHTML()}</div>`;
   loadAdminOverview();
-  buildEventDropdowns();
 }
 
-// ── OVERVIEW ─────────────────────────────────────────────────────
+// ── OVERVIEW ─────────────────────────────────────────────────
 function overviewHTML(){return `
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Total Registrations</div><div class="stat-val" id="st-regs">—</div></div>
@@ -470,15 +526,14 @@ function overviewHTML(){return `
     </table></div>
   </div>`;}
 
-async function loadAdminOverview(){
+async function loadAdminOverview(silent=false){
   try{
     const[sales,members,events]=await Promise.all([api('GET','/api/sales'),api('GET','/api/members'),api('GET','/api/events')]);
-    document.getElementById('st-regs').textContent=sales.length;
-    document.getElementById('st-rev').textContent=fmtMoney(sales.reduce((s,r)=>s+parseFloat(r.amount_paid),0));
-    document.getElementById('st-mem').textContent=members.length;
-    document.getElementById('st-evs').textContent=events.length;
-    const tbody=document.getElementById('recent-body');
-    if(!tbody)return;
+    const stRegs=document.getElementById('st-regs');if(stRegs)stRegs.textContent=sales.length;
+    const stRev=document.getElementById('st-rev');if(stRev)stRev.textContent=fmtMoney(sales.reduce((s,r)=>s+parseFloat(r.amount_paid),0));
+    const stMem=document.getElementById('st-mem');if(stMem)stMem.textContent=members.length;
+    const stEvs=document.getElementById('st-evs');if(stEvs)stEvs.textContent=events.length;
+    const tbody=document.getElementById('recent-body');if(!tbody)return;
     if(!sales.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>';return;}
     const rows=sales.slice(0,10).map(r=>{
       const tr=document.createElement('tr');
@@ -494,10 +549,10 @@ async function loadAdminOverview(){
       return tr;
     });
     tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
-  }catch(e){toast(e.message,'err');}
+  }catch(e){if(!silent)toast(e.message,'err');}
 }
 
-// ── MEMBERS ──────────────────────────────────────────────────────
+// ── MEMBERS ──────────────────────────────────────────────────
 function membersHTML(){return `
   <div class="sec-hdr">
     <div style="display:flex;align-items:center"><span class="sec-title">Members</span><span class="count" id="mem-count">0</span></div>
@@ -506,50 +561,49 @@ function membersHTML(){return `
       <button class="btn btn-accent" onclick="openAddMember()">+ Add Member</button>
     </div>
   </div>
+  <div class="search-bar"><input type="text" id="mem-search" placeholder="Search by name, phone or email..." oninput="filterMembers()"></div>
   <div class="tbl-wrap"><table>
     <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
     <tbody id="mem-body"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
   </table></div>`;}
 
-async function loadMembers(){
+async function loadMembers(silent=false){
   const tbody=document.getElementById('mem-body');if(!tbody)return;
   try{
-    const data=await api('GET','/api/members');
-    const c=document.getElementById('mem-count');if(c)c.textContent=data.length;
-    if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">👥</div><p>No members yet.</p></div></td></tr>';return;}
-    const rows=data.map(m=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td><strong class="mn"></strong></td>
-        <td class="mp"></td>
-        <td style="color:var(--muted)" class="me"></td>
-        <td><span class="pill ${m.role==='admin'?'pill-admin':'pill-member'}">${m.role}</span></td>
-        <td style="color:var(--muted);font-size:12px">${fmtDate(m.created_at)}</td>
-        <td><div class="acts">
-          <button class="btn btn-blue" data-action="edit">Edit</button>
-          <button class="btn btn-red" data-action="del">Delete</button>
-        </div></td>`;
-      tr.querySelector('.mn').textContent=m.name;
-      tr.querySelector('.me').textContent=m.email;
-      // Phone — clickable call link if present
-      const mpEl=tr.querySelector('.mp');
-      if(m.phone_number){
-        const a=document.createElement('a');
-        a.href='tel:'+m.phone_number;
-        a.style.cssText='color:var(--green);font-family:var(--fm);font-size:13px;text-decoration:none;';
-        a.textContent='📞 '+m.phone_number;
-        mpEl.appendChild(a);
-      } else {
-        mpEl.style.color='var(--dim)';
-        mpEl.textContent='—';
-      }
-      tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditMember(m));
-      tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(m.id,'member','member "'+m.name+'"'));
-      return tr;
-    });
-    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
-  }catch(e){toast(e.message,'err');}
+    allMembers=await api('GET','/api/members');
+    const c=document.getElementById('mem-count');if(c)c.textContent=allMembers.length;
+    filterMembers();
+  }catch(e){if(!silent)toast(e.message,'err');}
 }
-
+function filterMembers(){
+  const q=(document.getElementById('mem-search')?.value||'').toLowerCase();
+  const data=q?allMembers.filter(m=>m.name.toLowerCase().includes(q)||m.email.toLowerCase().includes(q)||(m.phone_number||'').includes(q)):allMembers;
+  renderMembers(data);
+}
+function renderMembers(data){
+  const tbody=document.getElementById('mem-body');if(!tbody)return;
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">👥</div><p>No members found.</p></div></td></tr>';return;}
+  const rows=data.map(m=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong class="mn"></strong></td><td class="mp"></td>
+      <td style="color:var(--muted)" class="me"></td>
+      <td><span class="pill ${m.role==='admin'?'pill-admin':'pill-member'}">${m.role}</span></td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(m.created_at)}</td>
+      <td><div class="acts">
+        <button class="btn btn-blue" data-action="edit">Edit</button>
+        <button class="btn btn-red" data-action="del">Delete</button>
+      </div></td>`;
+    tr.querySelector('.mn').textContent=m.name;
+    tr.querySelector('.me').textContent=m.email;
+    const mpEl=tr.querySelector('.mp');
+    if(m.phone_number){const a=document.createElement('a');a.href='tel:'+m.phone_number;a.style.cssText='color:var(--green);font-family:var(--fm);font-size:13px;text-decoration:none;';a.textContent='📞 '+m.phone_number;mpEl.appendChild(a);}
+    else{mpEl.style.color='var(--dim)';mpEl.textContent='—';}
+    tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditMember(m));
+    tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(m.id,'member','member "'+m.name+'"'));
+    return tr;
+  });
+  tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
+}
 function openAddMember(){
   document.getElementById('mm-title').textContent='Add Member';
   document.getElementById('mm-sub').textContent='Create a new portal account.';
@@ -594,53 +648,46 @@ async function saveMember(){
   busy('btn-save-member',false,'Save');
 }
 
-// ── STUDENTS (admin) ─────────────────────────────────────────────
+// ── STUDENTS ─────────────────────────────────────────────────
 function studentsHTML(){return `
   <div class="sec-hdr">
     <div style="display:flex;align-items:center"><span class="sec-title">Students</span><span class="count" id="stu-count">0</span></div>
     <button class="btn btn-sm" onclick="loadStudents()">↺ Refresh</button>
   </div>
-  <div class="search-bar">
-    <input type="text" id="stu-search" placeholder="Search by name, phone or email..." oninput="filterStudents()">
-  </div>
+  <div class="search-bar"><input type="text" id="stu-search" placeholder="Search by name, student ID, phone or email..." oninput="filterStudents()"></div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
-    <tbody id="stu-body"><tr><td colspan="5"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
+    <thead><tr><th>Student ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
+    <tbody id="stu-body"><tr><td colspan="6"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
   </table></div>`;}
 
-let allStudents=[];
-async function loadStudents(){
+async function loadStudents(silent=false){
   const tbody=document.getElementById('stu-body');if(!tbody)return;
   try{
     allStudents=await api('GET','/api/students');
     const c=document.getElementById('stu-count');if(c)c.textContent=allStudents.length;
-    renderStudents(allStudents);
-  }catch(e){toast(e.message,'err');}
+    filterStudents();
+  }catch(e){if(!silent)toast(e.message,'err');}
 }
-
 function filterStudents(){
   const q=(document.getElementById('stu-search')?.value||'').toLowerCase();
-  if(!q){renderStudents(allStudents);return;}
-  renderStudents(allStudents.filter(s=>
-    s.name.toLowerCase().includes(q)||
-    s.phone_number.includes(q)||
-    s.email.toLowerCase().includes(q)
-  ));
+  const data=q?allStudents.filter(s=>s.name.toLowerCase().includes(q)||(s.student_id||'').toLowerCase().includes(q)||s.phone_number.includes(q)||s.email.toLowerCase().includes(q)):allStudents;
+  renderStudents(data);
 }
-
 function renderStudents(data){
   const tbody=document.getElementById('stu-body');if(!tbody)return;
-  if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="ei">🎓</div><p>No students found.</p></div></td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="ei">🎓</div><p>No students found.</p></div></td></tr>';return;}
   const rows=data.map(s=>{
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><strong class="sn"></strong></td>
+    tr.innerHTML=`<td style="font-family:var(--fm);color:var(--accent-h)" class="sid"></td>
+      <td><strong class="sn"></strong></td>
       <td style="font-family:var(--fm)" class="sp"></td>
       <td style="color:var(--muted)" class="se"></td>
       <td style="color:var(--muted);font-size:12px">${fmtDate(s.created_at)}</td>
       <td><div class="acts">
         <button class="btn btn-blue" data-action="edit">Edit</button>
-        <button class="btn btn-red"  data-action="del">Delete</button>
+        <button class="btn btn-red" data-action="del">Delete</button>
       </div></td>`;
+    tr.querySelector('.sid').textContent=s.student_id||'—';
     tr.querySelector('.sn').textContent=s.name;
     tr.querySelector('.sp').textContent=s.phone_number;
     tr.querySelector('.se').textContent=s.email;
@@ -650,10 +697,10 @@ function renderStudents(data){
   });
   tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
 }
-
 function openEditStudent(s){
   document.getElementById('ms-id').value=s.id;
   document.getElementById('ms-sub').textContent='Editing details for '+s.name;
+  document.getElementById('ms-sid').value=s.student_id||'';
   document.getElementById('ms-name').value=s.name;
   document.getElementById('ms-phone').value=s.phone_number;
   document.getElementById('ms-email').value=s.email;
@@ -661,21 +708,23 @@ function openEditStudent(s){
 }
 async function saveStudent(){
   const id=document.getElementById('ms-id').value;
+  const sid=document.getElementById('ms-sid').value.trim();
   const name=document.getElementById('ms-name').value.trim();
   const phone=document.getElementById('ms-phone').value.trim();
   const email=document.getElementById('ms-email').value.trim();
+  if(!sid){toast('Enter a Student ID.','err');return;}
   if(!name){toast('Enter a name.','err');return;}
   if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone.','err');return;}
   if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
   busy('btn-save-student',true);
   try{
-    await api('PUT','/api/students/'+id,{name,phone,email});
+    await api('PUT','/api/students/'+id,{student_id:sid,name,phone,email});
     toast('✓ Student updated.');closeM('m-student');loadStudents();
   }catch(e){toast(e.message,'err');}
   busy('btn-save-student',false,'Save');
 }
 
-// ── EVENTS ───────────────────────────────────────────────────────
+// ── EVENTS ───────────────────────────────────────────────────
 function eventsHTML(){return `
   <div class="card">
     <div class="card-head"><div class="card-title">Add New Event</div></div>
@@ -694,7 +743,7 @@ function eventsHTML(){return `
     <tbody id="ev-body"><tr><td colspan="4"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
   </table></div>`;}
 
-async function loadEventsTable(){
+async function loadEventsTable(silent=false){
   const tbody=document.getElementById('ev-body');if(!tbody)return;
   try{
     const data=await api('GET','/api/events');
@@ -707,7 +756,7 @@ async function loadEventsTable(){
         <td style="color:var(--muted);font-size:12px">${fmtDate(ev.created_at)}</td>
         <td><div class="acts">
           <button class="btn btn-gold" data-action="fee">Edit Fee</button>
-          <button class="btn btn-red"  data-action="del">Delete</button>
+          <button class="btn btn-red" data-action="del">Delete</button>
         </div></td>`;
       tr.querySelector('.en').textContent=ev.title;
       tr.querySelector('[data-action="fee"]').addEventListener('click',()=>openFee(ev.id,ev.title,ev.cost));
@@ -715,9 +764,8 @@ async function loadEventsTable(){
       return tr;
     });
     tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
-  }catch(e){toast(e.message,'err');}
+  }catch(e){if(!silent)toast(e.message,'err');}
 }
-
 async function addEvent(){
   const title=document.getElementById('ev-title').value.trim();
   const cost=parseFloat(document.getElementById('ev-cost').value);
@@ -728,11 +776,10 @@ async function addEvent(){
     await api('POST','/api/events',{title,cost});
     toast('✓ Event added.');
     document.getElementById('ev-title').value='';document.getElementById('ev-cost').value='';
-    loadEventsTable();await loadEventsCache();buildEventDropdowns();
+    loadEventsTable();await loadEventsCache();
   }catch(e){toast(e.message,'err');}
   busy('btn-add-ev',false,'Add Event');
 }
-
 function openFee(id,title,cur){
   document.getElementById('mf-id').value=id;
   document.getElementById('mf-sub').textContent='Current fee for "'+title+'": '+fmtMoney(cur);
@@ -747,14 +794,14 @@ async function saveFee(){
   try{
     await api('PUT','/api/events/'+id,{cost});
     toast('✓ Fee updated.');closeM('m-fee');
-    loadEventsTable();await loadEventsCache();buildEventDropdowns();
+    loadEventsTable();await loadEventsCache();
   }catch(e){toast(e.message,'err');}
   busy('btn-save-fee',false,'Save Fee');
 }
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  MEMBER DASHBOARD
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function buildMember(){
   document.getElementById('tabs-bar').innerHTML=`
     <button class="tab active" type="button" onclick="switchTab('register',this)">✚ New Registration</button>
@@ -762,52 +809,49 @@ function buildMember(){
   document.getElementById('main-content').innerHTML=`
     <div id="panel-register" class="panel active">${registerHTML()}</div>
     <div id="panel-sales"    class="panel">${salesTableHTML(false)}</div>`;
-  buildEventDropdowns();
 }
 
-// ════════════════════════════════════════════════════════════════
-//  REGISTRATION FORM WITH SMART LOOKUP
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  REGISTRATION FORM — student_id lookup + multi-event
+// ════════════════════════════════════════════════════════════
 function registerHTML(){return `
   <div class="card">
     <div class="card-head"><div class="card-title">Student Lookup</div></div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Enter the student's phone and email to check if they're already registered.</p>
-
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Enter the student's College ID to check if they exist in the system.</p>
     <div class="lookup-row">
-      <div class="fg0"><label>Phone Number</label>
-        <input type="tel" id="r-phone" placeholder="9876543210" maxlength="10" oninput="resetLookup()">
-      </div>
-      <div class="fg0"><label>Email Address</label>
-        <input type="email" id="r-email" placeholder="student@email.com" oninput="resetLookup()">
+      <div class="fg0"><label>Student ID (College Roll No.)</label>
+        <input type="text" id="r-sid" placeholder="e.g. CS2024001" style="font-family:var(--fm);text-transform:uppercase" oninput="resetLookup()">
       </div>
       <button class="btn btn-accent" id="btn-lookup" onclick="doLookup()" style="height:44px;align-self:end">Check →</button>
     </div>
-
-    <!-- Status feedback -->
-    <div class="lookup-status" id="ls-box">
-      <span class="ls-icon" id="ls-icon"></span>
-      <span id="ls-msg"></span>
-    </div>
-
-    <!-- Name field — shown only when new student -->
-    <div class="name-field" id="name-field">
-      <div class="fg0"><label>Student Name</label>
-        <input type="text" id="r-name" placeholder="Full name of student">
+    <div class="lookup-status" id="ls-box"><span class="ls-icon" id="ls-icon"></span><span id="ls-msg"></span></div>
+    <div class="name-field" id="new-student-fields">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:4px">New student — fill in their details:</p>
+      <div class="row3">
+        <div class="fg0"><label>Full Name</label><input type="text" id="r-name" placeholder="Student name"></div>
+        <div class="fg0"><label>Phone</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
+        <div class="fg0"><label>Email</label><input type="email" id="r-email" placeholder="student@email.com"></div>
       </div>
+    </div>
+    <div id="found-student-info" style="display:none;margin-top:12px;padding:12px 16px;background:var(--s3);border-radius:var(--r2);font-size:13px;">
+      <span style="color:var(--muted)">Name: </span><strong id="fsi-name"></strong>
+      <span style="color:var(--muted);margin-left:16px">Phone: </span><span id="fsi-phone" style="font-family:var(--fm)"></span>
+      <span style="color:var(--muted);margin-left:16px">Email: </span><span id="fsi-email"></span>
     </div>
   </div>
 
   <div class="card" id="event-card" style="display:none">
-    <div class="card-head"><div class="card-title">Event & Payment</div></div>
-    <div class="fg0"><label>Select Event</label>
-      <select id="r-event" onchange="onEventChange()">
-        <option value="">-- Choose an event --</option>
-      </select>
+    <div class="card-head"><div class="card-title">Select Events</div><span style="font-size:12px;color:var(--muted)">You can select multiple</span></div>
+    <div class="ev-search-wrap">
+      <input type="text" id="ev-search-inp" placeholder="🔍  Search events..." oninput="filterEventList()">
     </div>
+    <div class="ev-list" id="ev-list"></div>
+    <div class="selected-events" id="selected-tags"></div>
     <div class="amt-box" id="amt-box">
-      <div><div class="amt-lbl">Amount to Collect</div></div>
+      <div><div class="amt-lbl">Total Amount to Collect</div></div>
       <div class="amt-val" id="amt-val">₹0</div>
     </div>
+
     <div class="mt"><label>Payment Method</label>
       <div class="pay-grid">
         <div class="pay-opt" id="opt-cash" onclick="selectPay('cash')">
@@ -828,130 +872,177 @@ function registerHTML(){return `
     </div>
   </div>`;}
 
-// ── LOOKUP LOGIC ─────────────────────────────────────────────────
+// ── LOOKUP ────────────────────────────────────────────────────
 function resetLookup(){
   lookupState=null;
-  const ls=document.getElementById('ls-box');if(ls){ls.className='lookup-status';ls.style.display='';}
-  const nf=document.getElementById('name-field');if(nf)nf.classList.remove('show');
-  const ec=document.getElementById('event-card');if(ec)ec.style.display='none';
-  // clear input styling
-  ['r-phone','r-email'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.classList.remove('inp-ok','inp-err');}
-  });
+  const ls=document.getElementById('ls-box');if(ls)ls.className='lookup-status';
+  document.getElementById('new-student-fields')?.classList.remove('show');
+  const fsi=document.getElementById('found-student-info');if(fsi)fsi.style.display='none';
+  document.getElementById('event-card')?.style&&(document.getElementById('event-card').style.display='none');
+  document.getElementById('r-sid')?.classList.remove('inp-ok','inp-err');
+  selectedEventIds.clear();
   selPay='';
   document.getElementById('opt-cash')?.classList.remove('sel');
   document.getElementById('opt-upi')?.classList.remove('sel');
-  document.getElementById('upi-field')?.style&&(document.getElementById('upi-field').style.display='none');
+  const uf=document.getElementById('upi-field');if(uf)uf.style.display='none';
   document.getElementById('amt-box')?.classList.remove('show');
+  document.getElementById('selected-tags')&&(document.getElementById('selected-tags').innerHTML='');
 }
 
-function showLookupStatus(type,msg){
-  const box=document.getElementById('ls-box');
-  const icon=document.getElementById('ls-icon');
-  const msgEl=document.getElementById('ls-msg');
-  if(!box)return;
+function showLS(type,msg){
+  const box=document.getElementById('ls-box');if(!box)return;
   const map={found:['ls-found','✅'],new:['ls-new','✨'],err:['ls-err','⚠️']};
   const[cls,ico]=map[type]||['ls-err','⚠️'];
   box.className='lookup-status show '+cls;
-  icon.textContent=ico;
-  msgEl.textContent=msg;
+  document.getElementById('ls-icon').textContent=ico;
+  document.getElementById('ls-msg').textContent=msg;
 }
 
 async function doLookup(){
-  const phone=document.getElementById('r-phone')?.value.trim();
-  const email=document.getElementById('r-email')?.value.trim();
-  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone number.','err');return;}
-  if(!email||!email.includes('@')){toast('Enter a valid email address.','err');return;}
-
+  const sid=(document.getElementById('r-sid')?.value||'').trim().toUpperCase();
+  if(!sid){toast('Enter a Student ID.','err');return;}
   busy('btn-lookup',true);
   try{
-    const result=await api('POST','/api/students/lookup',{phone,email});
+    // Pass empty phone/email since lookup is purely by student_id now
+    const result=await api('POST','/api/students/lookup',{student_id:sid,phone:'',email:''});
     lookupState=result;
+    document.getElementById('r-sid').classList.remove('inp-err');
 
     if(result.status==='found'){
-      // Auto-fill name, show event card
-      const nf=document.getElementById('name-field');
-      if(nf){
-        nf.classList.add('show');
-        const ni=document.getElementById('r-name');
-        if(ni){ni.value=result.student.name;ni.readOnly=true;ni.style.color='var(--muted)';}
-      }
-      document.getElementById('r-phone').classList.add('inp-ok');
-      document.getElementById('r-email').classList.add('inp-ok');
-      showLookupStatus('found','Student found: '+result.student.name+'. Proceed to select event.');
-      document.getElementById('event-card').style.display='block';
-      buildEventDropdowns();
+      const s=result.student;
+      document.getElementById('r-sid').classList.add('inp-ok');
+      document.getElementById('fsi-name').textContent=s.name;
+      document.getElementById('fsi-phone').textContent=s.phone_number;
+      document.getElementById('fsi-email').textContent=s.email;
+      document.getElementById('found-student-info').style.display='block';
+      document.getElementById('new-student-fields').classList.remove('show');
+      showLS('found','Student found: '+s.name);
+      showEventCard();
+    } else if(result.status==='new'){
+      document.getElementById('r-sid').classList.add('inp-ok');
+      document.getElementById('found-student-info').style.display='none';
+      document.getElementById('new-student-fields').classList.add('show');
+      ['r-name','r-phone','r-email'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
+      showLS('new','New student — please fill in their details above.');
+      showEventCard();
+    } else {
+      document.getElementById('r-sid').classList.add('inp-err');
+      showLS('err',result.error);
     }
-    else if(result.status==='new'){
-      // Show name input
-      const nf=document.getElementById('name-field');if(nf)nf.classList.add('show');
-      const ni=document.getElementById('r-name');if(ni){ni.value='';ni.readOnly=false;ni.style.color='';}
-      document.getElementById('r-phone').classList.add('inp-ok');
-      document.getElementById('r-email').classList.add('inp-ok');
-      showLookupStatus('new','New student — please enter their name below.');
-      document.getElementById('event-card').style.display='block';
-      buildEventDropdowns();
-    }
-    else{
-      // mismatch or conflict
-      document.getElementById('r-phone').classList.add('inp-err');
-      document.getElementById('r-email').classList.add('inp-err');
-      showLookupStatus('err',result.error);
-      document.getElementById('event-card').style.display='none';
-    }
-  }catch(e){
-    showLookupStatus('err',e.message);
-  }
+  }catch(e){ showLS('err',e.message); }
   busy('btn-lookup',false,'Check →');
 }
 
-function onEventChange(){
-  const sel=document.getElementById('r-event');
-  const opt=sel?.options[sel.selectedIndex];
+function showEventCard(){
+  const ec=document.getElementById('event-card');
+  if(ec){ ec.style.display='block'; buildEventList(); }
+}
+
+// ── MULTI-EVENT LIST WITH SEARCH ────────────────────────────
+function buildEventList(){
+  filterEventList();
+}
+function filterEventList(){
+  const q=(document.getElementById('ev-search-inp')?.value||'').toLowerCase();
+  const evs=Object.values(eventsCache).filter(ev=>!q||ev.title.toLowerCase().includes(q));
+  const list=document.getElementById('ev-list');if(!list)return;
+  if(!evs.length){list.innerHTML='<div style="padding:14px;color:var(--muted);font-size:13px;">No events found.</div>';return;}
+  list.innerHTML='';
+  evs.forEach(ev=>{
+    const item=document.createElement('div');
+    item.className='ev-item'+(selectedEventIds.has(ev.id)?' selected':'');
+    item.innerHTML=`<input type="checkbox" class="ev-cb" ${selectedEventIds.has(ev.id)?'checked':''}><span class="ev-label"></span><span class="ev-cost">${fmtMoney(ev.cost)}</span>`;
+    item.querySelector('.ev-label').textContent=ev.title;
+    item.addEventListener('click',()=>toggleEvent(ev.id));
+    list.appendChild(item);
+  });
+}
+function toggleEvent(id){
+  if(selectedEventIds.has(id)) selectedEventIds.delete(id);
+  else selectedEventIds.add(id);
+  buildEventList();
+  updateSelectedTags();
+  updateTotalAmount();
+}
+function updateSelectedTags(){
+  const container=document.getElementById('selected-tags');if(!container)return;
+  container.innerHTML='';
+  selectedEventIds.forEach(id=>{
+    const ev=eventsCache[id];if(!ev)return;
+    const tag=document.createElement('div');tag.className='ev-tag';
+    const lbl=document.createElement('span');lbl.textContent=ev.title;
+    const btn=document.createElement('button');btn.textContent='×';btn.type='button';
+    btn.addEventListener('click',()=>toggleEvent(id));
+    tag.appendChild(lbl);tag.appendChild(btn);
+    container.appendChild(tag);
+  });
+}
+function updateTotalAmount(){
+  const total=Array.from(selectedEventIds).reduce((s,id)=>s+(eventsCache[id]?.cost||0),0);
   const box=document.getElementById('amt-box');
-  if(sel?.value&&opt?.dataset.cost){
-    document.getElementById('amt-val').textContent=fmtMoney(opt.dataset.cost);
+  if(selectedEventIds.size>0){
+    document.getElementById('amt-val').textContent=fmtMoney(total);
     box?.classList.add('show');
-  }else{box?.classList.remove('show');}
+  } else {
+    box?.classList.remove('show');
+  }
 }
 
 function selectPay(m){
   selPay=m;
   document.getElementById('opt-cash')?.classList.toggle('sel',m==='cash');
   document.getElementById('opt-upi')?.classList.toggle('sel',m==='upi');
-  const uf=document.getElementById('upi-field');
-  if(uf)uf.style.display=m==='upi'?'block':'none';
+  const uf=document.getElementById('upi-field');if(uf)uf.style.display=m==='upi'?'block':'none';
   if(m!=='upi'){const t=document.getElementById('r-txn');if(t)t.value='';}
 }
 
 async function submitReg(){
   if(!lookupState){toast('Please check the student first.','err');return;}
-  const phone=document.getElementById('r-phone')?.value.trim();
-  const email=document.getElementById('r-email')?.value.trim();
-  const name =document.getElementById('r-name')?.value.trim();
-  const evId =document.getElementById('r-event')?.value;
-  const txn  =document.getElementById('r-txn')?.value.trim();
+  const sid=(document.getElementById('r-sid')?.value||'').trim().toUpperCase();
+  const txn=document.getElementById('r-txn')?.value.trim();
+  let name,phone,email;
 
-  if(!name){toast('Enter the student name.','err');return;}
-  if(!evId){toast('Select an event.','err');return;}
+  if(lookupState.status==='found'){
+    name =lookupState.student.name;
+    phone=lookupState.student.phone_number;
+    email=lookupState.student.email;
+  } else {
+    name =document.getElementById('r-name')?.value.trim();
+    phone=document.getElementById('r-phone')?.value.trim();
+    email=document.getElementById('r-email')?.value.trim();
+    if(!name){toast('Enter the student name.','err');return;}
+    if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone.','err');return;}
+    if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
+  }
+  if(selectedEventIds.size===0){toast('Select at least one event.','err');return;}
   if(!selPay){toast('Select a payment method.','err');return;}
   if(selPay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
 
   busy('reg-btn',true);
   try{
-    await api('POST','/api/register',{name,phone,email,event_id:evId,payment_method:selPay,transaction_id:txn||null});
-    toast('✓ Student registered successfully!');
-    // reset form
-    ['r-phone','r-email','r-name','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
-    resetLookup();
+    const res=await api('POST','/api/register',{
+      student_id:sid, name, phone, email,
+      event_ids:Array.from(selectedEventIds),
+      payment_method:selPay,
+      transaction_id:txn||null
+    });
+    toast(`✓ Registered for ${res.count} event${res.count>1?'s':''}!`);
+    resetRegForm();
   }catch(e){toast(e.message,'err');}
   busy('reg-btn',false,'Register Student →');
 }
 
-// ════════════════════════════════════════════════════════════════
-//  SALES TABLE (shared admin+member)
-// ════════════════════════════════════════════════════════════════
+function resetRegForm(){
+  const sid=document.getElementById('r-sid');if(sid){sid.value='';sid.classList.remove('inp-ok','inp-err');}
+  ['r-name','r-phone','r-email','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
+  document.getElementById('ev-search-inp')&&(document.getElementById('ev-search-inp').value='');
+  resetLookup();
+  loadEventsCache();
+}
+
+// ════════════════════════════════════════════════════════════
+//  SALES TABLE
+// ════════════════════════════════════════════════════════════
 function salesTableHTML(isAdmin){
   const cols=isAdmin
     ?'<th>Student</th><th>Event</th><th>Member</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th>'
@@ -964,55 +1055,73 @@ function salesTableHTML(isAdmin){
     </div>
     <button class="btn btn-sm" onclick="loadSales()">↺ Refresh</button>
   </div>
+  <div class="search-bar"><input type="text" id="sales-search" placeholder="Search by student name, ID, event or member..." oninput="filterSales()"></div>
   <div class="tbl-wrap"><table>
     <thead><tr>${cols}</tr></thead>
     <tbody id="sales-body"><tr><td colspan="${isAdmin?7:6}"><div class="empty"><div class="ei">⏳</div></div></td></tr></tbody>
   </table></div>`;}
 
-async function loadSales(){
+async function loadSales(silent=false){
   const tbody=document.getElementById('sales-body');if(!tbody)return;
-  const isAdmin=session.role==='admin';
-  const cols=isAdmin?7:6;
-  tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">⏳</div></div></td></tr>`;
+  const isAdmin=session.role==='admin';const cols=isAdmin?7:6;
+  if(!silent) tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">⏳</div></div></td></tr>`;
   try{
-    const data=await api('GET','/api/sales');
-    salesCache={};data.forEach(r=>salesCache[r.id]=r);
-    const c=document.getElementById('sales-count');if(c)c.textContent=data.length;
-    if(!data.length){tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">📋</div><p>No registrations yet.</p></div></td></tr>`;return;}
-    const rows=data.map(r=>{
-      const tr=document.createElement('tr');
-      const pc=r.payment_method==='cash'?'pill-cash':'pill-upi';
-      const pt=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
-      const memCol=isAdmin?'<td class="mn" style="color:var(--muted)"></td>':'';
-      tr.innerHTML=`
-        <td><div style="font-weight:600" class="sn"></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:2px" class="sp"></div></td>
-        <td style="font-weight:500" class="et"></td>
-        ${memCol}
-        <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
-        <td><span class="pill ${pc}">${pt}</span>${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
-        <td style="color:var(--muted);font-size:12px">${fmtDate(r.registered_at)}</td>
-        <td><div class="acts">
-          <button class="btn btn-blue" data-action="edit">Edit</button>
-          <button class="btn btn-red"  data-action="del">Delete</button>
-        </div></td>`;
-      tr.querySelector('.sn').textContent=r.Students.name;
-      tr.querySelector('.sp').textContent=r.Students.phone_number;
-      tr.querySelector('.et').textContent=r.Events.title;
-      if(isAdmin&&r.Members)tr.querySelector('.mn').textContent=r.Members.name;
-      if(r.transaction_id)tr.querySelector('.txn').textContent=r.transaction_id;
-      tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
-      tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
-      return tr;
-    });
-    tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
-    // rebuild edit modal dropdowns after render
-    buildEventDropdowns();
-  }catch(e){toast(e.message,'err');}
+    allSales=await api('GET','/api/sales');
+    salesCache={};allSales.forEach(r=>salesCache[r.id]=r);
+    filterSales();
+    buildEditEventDropdown();
+  }catch(e){if(!silent)toast(e.message,'err');}
+}
+function filterSales(){
+  const q=(document.getElementById('sales-search')?.value||'').toLowerCase();
+  const isAdmin=session.role==='admin';
+  const data=q?allSales.filter(r=>
+    r.Students.name.toLowerCase().includes(q)||
+    (r.Students.student_id||'').toLowerCase().includes(q)||
+    r.Events.title.toLowerCase().includes(q)||
+    (isAdmin&&r.Members&&r.Members.name.toLowerCase().includes(q))
+  ):allSales;
+  const c=document.getElementById('sales-count');if(c)c.textContent=data.length;
+  renderSales(data);
+}
+function renderSales(data){
+  const tbody=document.getElementById('sales-body');if(!tbody)return;
+  const isAdmin=session.role==='admin';const cols=isAdmin?7:6;
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">📋</div><p>No registrations found.</p></div></td></tr>`;return;}
+  const rows=data.map(r=>{
+    const tr=document.createElement('tr');
+    const pc=r.payment_method==='cash'?'pill-cash':'pill-upi';
+    const pt=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
+    const memCol=isAdmin?'<td class="mn" style="color:var(--muted)"></td>':'';
+    tr.innerHTML=`
+      <td><div style="font-weight:600" class="sn"></div>
+          <div style="font-size:11px;color:var(--accent-h);font-family:var(--fm)" class="ssid"></div>
+          <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:1px" class="sp"></div></td>
+      <td style="font-weight:500" class="et"></td>
+      ${memCol}
+      <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
+      <td><span class="pill ${pc}">${pt}</span>${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
+      <td style="color:var(--muted);font-size:12px">${fmtDateTime(r.registered_at)}</td>
+      <td><div class="acts">
+        <button class="btn btn-blue" data-action="edit">Edit</button>
+        <button class="btn btn-red" data-action="del">Delete</button>
+      </div></td>`;
+    tr.querySelector('.sn').textContent=r.Students.name;
+    tr.querySelector('.ssid').textContent=r.Students.student_id||'';
+    tr.querySelector('.sp').textContent=r.Students.phone_number;
+    tr.querySelector('.et').textContent=r.Events.title;
+    if(isAdmin&&r.Members)tr.querySelector('.mn').textContent=r.Members.name;
+    if(r.transaction_id)tr.querySelector('.txn').textContent=r.transaction_id;
+    tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
+    tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
+    return tr;
+  });
+  tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
 }
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  EDIT REGISTRATION
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function openEditReg(r){
   document.getElementById('me-id').value=r.id;
   document.getElementById('me-stu-id').value=r.Students.id;
@@ -1022,6 +1131,7 @@ function openEditReg(r){
   document.getElementById('me-pay').value=r.payment_method;
   document.getElementById('me-txn').value=r.transaction_id||'';
   document.getElementById('me-sub').textContent='Editing registration for '+r.Students.name;
+  buildEditEventDropdown();
   const msel=document.getElementById('me-event');
   for(let i=0;i<msel.options.length;i++){if(msel.options[i].value===r.Events.id){msel.selectedIndex=i;break;}}
   toggleEditUPI();
@@ -1050,14 +1160,14 @@ async function saveEdit(){
   try{
     await api('PUT','/api/sales/'+regId,{student_id:stuId,name,phone,email,event_id:evId,payment_method:pay,transaction_id:txn||null});
     toast('✓ Registration updated.');closeM('m-edit');
-    loadSales();if(session.role==='admin')loadAdminOverview();
+    loadSales();if(session.role==='admin')loadAdminOverview(true);
   }catch(e){toast(e.message,'err');}
   busy('btn-save-edit',false,'Save Changes');
 }
 
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  UNIVERSAL DELETE
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function openDel(id,type,label){
   document.getElementById('md-id').value=id;
   document.getElementById('md-type').value=type;
@@ -1074,10 +1184,10 @@ async function confirmDel(){
     else if(type==='event')  await api('DELETE','/api/events/'+id);
     else if(type==='student')await api('DELETE','/api/students/'+id);
     toast('Deleted successfully.');closeM('m-del');
-    if(type==='registration'){loadSales();if(session.role==='admin')loadAdminOverview();}
-    if(type==='member')loadMembers();
-    if(type==='event'){loadEventsTable();loadEventsCache().then(buildEventDropdowns);}
-    if(type==='student')loadStudents();
+    if(type==='registration'){loadSales();if(session.role==='admin')loadAdminOverview(true);}
+    if(type==='member') loadMembers();
+    if(type==='event'){loadEventsTable();loadEventsCache();}
+    if(type==='student') loadStudents();
   }catch(e){toast(e.message,'err');}
   busy('btn-del',false,'Delete');
 }
