@@ -71,9 +71,6 @@ app.post('/api/logout', requireAuth, (req, res) => {
 
 app.post('/api/students/lookup', requireAuth, async (req, res) => {
   const studentId = sanitize(req.body.student_id || '').toUpperCase();
-  const phone     = String(req.body.phone || '').trim();
-  const email     = String(req.body.email || '').trim().toLowerCase();
-
   if (!studentId) return res.status(400).json({ error: 'Enter a Student ID.' });
 
   // Primary lookup: by student_id
@@ -84,32 +81,34 @@ app.post('/api/students/lookup', requireAuth, async (req, res) => {
     .maybeSingle();
 
   if (byId) {
-    return res.json({ status: 'found', student: byId });
+    // Fetch which events this student is CURRENTLY registered for (not deleted)
+    const { data: regs } = await db
+      .from('Registrations')
+      .select('event_id')
+      .eq('student_id', byId.id);
+    const registeredEventIds = (regs || []).map(r => r.event_id);
+    return res.json({ status: 'found', student: byId, registeredEventIds });
   }
 
-  // Not found — new student. But check phone & email aren't taken by someone else
-  const checks = [];
-  if (phone) checks.push(db.from('Students').select('id, student_id').eq('phone_number', phone).maybeSingle());
-  if (email) checks.push(db.from('Students').select('id, student_id').eq('email', email).maybeSingle());
+  // Not found — new student, all events available
+  return res.json({ status: 'new', registeredEventIds: [] });
+});
 
-  const results = await Promise.all(checks);
-  const takenPhone = phone ? results[0]?.data : null;
-  const takenEmail = email ? results[checks.length - 1]?.data : null;
-
-  if (takenPhone) {
-    return res.json({
-      status: 'conflict',
-      error: `Phone number already belongs to student ID: ${takenPhone.student_id}. Please use the correct Student ID.`
-    });
+// Check if a phone or email is already used by another student (for new student flow)
+app.post('/api/students/check-unique', requireAuth, async (req, res) => {
+  const { field, value } = req.body;
+  if (!field || !value) return res.status(400).json({ error: 'Missing field or value.' });
+  if (field === 'phone') {
+    if (!isPhone(value)) return res.status(400).json({ error: 'Invalid phone.' });
+    const { data } = await db.from('Students').select('student_id').eq('phone_number', value).maybeSingle();
+    return res.json({ unique: !data, student_id: data?.student_id || null });
   }
-  if (takenEmail) {
-    return res.json({
-      status: 'conflict',
-      error: `Email already belongs to student ID: ${takenEmail.student_id}. Please use the correct Student ID.`
-    });
+  if (field === 'email') {
+    if (!isEmail(value)) return res.status(400).json({ error: 'Invalid email.' });
+    const { data } = await db.from('Students').select('student_id').eq('email', value.toLowerCase()).maybeSingle();
+    return res.json({ unique: !data, student_id: data?.student_id || null });
   }
-
-  return res.json({ status: 'new' });
+  return res.status(400).json({ error: 'field must be phone or email.' });
 });
 
 // ════════════════════════════════════════════════════════
@@ -172,6 +171,11 @@ app.post('/api/members', requireAuth, requireAdmin, async (req, res) => {
   if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
   if (pw.length < 8)   return res.status(400).json({ error: 'Password must be at least 8 characters.' });
   if (phone_m && !isPhone(phone_m)) return res.status(400).json({ error: 'Member phone must be 10 digits.' });
+  // Check phone uniqueness manually before insert (gives clear message)
+  if (phone_m) {
+    const { data: ph_taken } = await db.from('Members').select('id').eq('phone_number', phone_m).maybeSingle();
+    if (ph_taken) return res.status(400).json({ error: 'Phone number already used by another member.' });
+  }
   const { error } = await db.from('Members').insert({ name, email, password: sha256(pw), role, phone_number: phone_m || null });
   if (error) {
     if (error.code === '23505') return res.status(400).json({ error: 'Email already exists.' });
@@ -193,6 +197,10 @@ app.put('/api/members/:id', requireAuth, requireAdmin, async (req, res) => {
   if (typeof req.body.phone !== 'undefined') {
     const ph = String(req.body.phone).trim();
     if (ph && !isPhone(ph)) return res.status(400).json({ error: 'Phone must be 10 digits.' });
+    if (ph) {
+      const { data: ph_taken } = await db.from('Members').select('id').eq('phone_number', ph).neq('id', id).maybeSingle();
+      if (ph_taken) return res.status(400).json({ error: 'Phone number already used by another member.' });
+    }
     updates.phone_number = ph || null;
   }
   if (req.body.email) {
@@ -316,9 +324,23 @@ app.post('/api/register', requireAuth, async (req, res) => {
     studentDbId = newStu.id;
   }
 
-  // Insert one registration per event
+  // Check which of the requested events the student is ALREADY registered for
+  const { data: existingRegs } = await db
+    .from('Registrations')
+    .select('event_id')
+    .eq('student_id', studentDbId)
+    .in('event_id', event_ids);
+
+  const alreadyRegistered = new Set((existingRegs || []).map(r => r.event_id));
+  const newEventIds = event_ids.filter(eid => !alreadyRegistered.has(eid));
+
+  if (newEventIds.length === 0) {
+    return res.status(400).json({ error: 'Student is already registered for all selected events.' });
+  }
+
+  // Insert only for events not already registered
   const eventMap = Object.fromEntries(eventsData.map(e => [e.id, e.cost]));
-  const registrations = event_ids.map(eid => ({
+  const registrations = newEventIds.map(eid => ({
     student_id:     studentDbId,
     event_id:       eid,
     member_id:      req.user.id,
@@ -329,10 +351,10 @@ app.post('/api/register', requireAuth, async (req, res) => {
 
   const { error: regErr } = await db.from('Registrations').insert(registrations);
   if (regErr) {
-    if (regErr.code === '23505') return res.status(400).json({ error: 'Student already registered for one or more of these events.' });
-    return res.status(500).json({ error: 'Failed to create registration.' });
+    return res.status(500).json({ error: 'Failed to create registration: ' + regErr.message });
   }
-  res.json({ ok: true, count: registrations.length });
+  const skipped = alreadyRegistered.size;
+  res.json({ ok: true, count: registrations.length, skipped });
 });
 
 app.put('/api/sales/:id', requireAuth, async (req, res) => {

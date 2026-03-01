@@ -827,11 +827,12 @@ function registerHTML(){return `
     <div class="lookup-status" id="ls-box"><span class="ls-icon" id="ls-icon"></span><span id="ls-msg"></span></div>
     <div class="name-field" id="new-student-fields">
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:4px">New student — fill in their details:</p>
-      <div class="row3">
+      <div class="row3" style="margin-bottom:12px">
         <div class="fg0"><label>Full Name</label><input type="text" id="r-name" placeholder="Student name"></div>
         <div class="fg0"><label>Phone</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
         <div class="fg0"><label>Email</label><input type="email" id="r-email" placeholder="student@email.com"></div>
       </div>
+      <button class="btn btn-accent" id="btn-confirm-details" onclick="confirmNewStudent()" type="button">Confirm Details →</button>
     </div>
     <div id="found-student-info" style="display:none;margin-top:12px;padding:12px 16px;background:var(--s3);border-radius:var(--r2);font-size:13px;">
       <span style="color:var(--muted)">Name: </span><strong id="fsi-name"></strong>
@@ -923,8 +924,9 @@ async function doLookup(){
       document.getElementById('found-student-info').style.display='none';
       document.getElementById('new-student-fields').classList.add('show');
       ['r-name','r-phone','r-email'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
-      showLS('new','New student — please fill in their details above.');
-      showEventCard();
+      // Hide event card until phone+email are confirmed
+      document.getElementById('event-card').style.display='none';
+      showLS('new','New student — fill in their details, then click Confirm Details.');
     } else {
       document.getElementById('r-sid').classList.add('inp-err');
       showLS('err',result.error);
@@ -938,6 +940,37 @@ function showEventCard(){
   if(ec){ ec.style.display='block'; buildEventList(); }
 }
 
+// Called when a NEW student fills in their details and clicks "Confirm Details"
+async function confirmNewStudent(){
+  const name  = document.getElementById('r-name')?.value.trim();
+  const phone = document.getElementById('r-phone')?.value.trim();
+  const email = document.getElementById('r-email')?.value.trim();
+  if(!name){toast('Enter the student name.','err');return;}
+  if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone.','err');return;}
+  if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
+
+  busy('btn-confirm-details',true);
+  try{
+    // Check phone uniqueness
+    const phoneCheck = await api('POST','/api/students/check-unique',{field:'phone',value:phone});
+    if(!phoneCheck.unique){
+      toast('Phone number already belongs to student ID: '+phoneCheck.student_id+'. Use the correct Student ID instead.','err');
+      busy('btn-confirm-details',false,'Confirm Details →');
+      return;
+    }
+    // Check email uniqueness
+    const emailCheck = await api('POST','/api/students/check-unique',{field:'email',value:email});
+    if(!emailCheck.unique){
+      toast('Email already belongs to student ID: '+emailCheck.student_id+'. Use the correct Student ID instead.','err');
+      busy('btn-confirm-details',false,'Confirm Details →');
+      return;
+    }
+    // All good — show event card
+    showEventCard();
+  }catch(e){toast(e.message,'err');}
+  busy('btn-confirm-details',false,'Confirm Details →');
+}
+
 // ── MULTI-EVENT LIST WITH SEARCH ────────────────────────────
 function buildEventList(){
   filterEventList();
@@ -949,11 +982,20 @@ function filterEventList(){
   if(!evs.length){list.innerHTML='<div style="padding:14px;color:var(--muted);font-size:13px;">No events found.</div>';return;}
   list.innerHTML='';
   evs.forEach(ev=>{
+    const alreadyDone = lookupState?.registeredEventIds?.includes(ev.id);
     const item=document.createElement('div');
-    item.className='ev-item'+(selectedEventIds.has(ev.id)?' selected':'');
-    item.innerHTML=`<input type="checkbox" class="ev-cb" ${selectedEventIds.has(ev.id)?'checked':''}><span class="ev-label"></span><span class="ev-cost">${fmtMoney(ev.cost)}</span>`;
-    item.querySelector('.ev-label').textContent=ev.title;
-    item.addEventListener('click',()=>toggleEvent(ev.id));
+    if(alreadyDone){
+      item.className='ev-item';
+      item.style.cssText='opacity:0.38;cursor:not-allowed;';
+      item.title='Already registered for this event';
+      item.innerHTML=`<input type="checkbox" class="ev-cb" disabled><span class="ev-label"></span><span style="font-size:11px;color:var(--muted);font-family:var(--fm)">Already registered</span>`;
+      item.querySelector('.ev-label').textContent=ev.title;
+    } else {
+      item.className='ev-item'+(selectedEventIds.has(ev.id)?' selected':'');
+      item.innerHTML=`<input type="checkbox" class="ev-cb" ${selectedEventIds.has(ev.id)?'checked':''}><span class="ev-label"></span><span class="ev-cost">${fmtMoney(ev.cost)}</span>`;
+      item.querySelector('.ev-label').textContent=ev.title;
+      item.addEventListener('click',()=>toggleEvent(ev.id));
+    }
     list.appendChild(item);
   });
 }
@@ -1026,7 +1068,8 @@ async function submitReg(){
       payment_method:selPay,
       transaction_id:txn||null
     });
-    toast(`✓ Registered for ${res.count} event${res.count>1?'s':''}!`);
+    const skipMsg = res.skipped>0 ? ` (${res.skipped} already registered, skipped)` : '';
+    toast(`✓ Registered for ${res.count} event${res.count>1?'s':''}!${skipMsg}`);
     resetRegForm();
   }catch(e){toast(e.message,'err');}
   busy('reg-btn',false,'Register Student →');
