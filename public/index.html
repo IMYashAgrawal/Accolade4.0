@@ -815,79 +815,199 @@ function buildMember(){
 //  REGISTRATION FORM — student_id lookup + multi-event
 // ════════════════════════════════════════════════════════════
 function registerHTML(){return `
-  <div class="card">
-    <div class="card-head"><div class="card-title">Student Lookup</div></div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Enter the student's College ID to check if they exist in the system.</p>
-    <div class="lookup-row">
-      <div class="fg0"><label>Student ID (College Roll No.)</label>
-        <input type="text" id="r-sid" placeholder="e.g. CS2024001" style="font-family:var(--fm);text-transform:uppercase" oninput="resetLookup()">
-      </div>
-      <button class="btn btn-accent" id="btn-lookup" onclick="doLookup()" style="height:44px;align-self:end">Check →</button>
-    </div>
-    <div class="lookup-status" id="ls-box"><span class="ls-icon" id="ls-icon"></span><span id="ls-msg"></span></div>
-    <div class="name-field" id="new-student-fields">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:4px">New student — fill in their details:</p>
-      <div class="row3" style="margin-bottom:12px">
-        <div class="fg0"><label>Full Name</label><input type="text" id="r-name" placeholder="Student name"></div>
-        <div class="fg0"><label>Phone</label><input type="tel" id="r-phone" placeholder="9876543210" maxlength="10"></div>
-        <div class="fg0"><label>Email</label><input type="email" id="r-email" placeholder="student@email.com"></div>
-      </div>
-      <button class="btn btn-accent" id="btn-confirm-details" onclick="confirmNewStudent()" type="button">Confirm Details →</button>
-    </div>
-    <div id="found-student-info" style="display:none;margin-top:12px;padding:12px 16px;background:var(--s3);border-radius:var(--r2);font-size:13px;">
-      <span style="color:var(--muted)">Name: </span><strong id="fsi-name"></strong>
-      <span style="color:var(--muted);margin-left:16px">Phone: </span><span id="fsi-phone" style="font-family:var(--fm)"></span>
-      <span style="color:var(--muted);margin-left:16px">Email: </span><span id="fsi-email"></span>
-    </div>
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Student Lookup</div>
   </div>
 
-  <div class="card" id="event-card" style="display:none">
-    <div class="card-head"><div class="card-title">Select Events</div><span style="font-size:12px;color:var(--muted)">You can select multiple</span></div>
+  <!-- STUDENT ID LOOKUP -->
+  <div class="lookup-row">
+    <div class="fg0">
+      <label>Student ID (Numbers Only)</label>
+      <input type="text"
+             id="r-sid"
+             maxlength="15"
+             inputmode="numeric"
+             placeholder="Enter Student ID"
+             style="font-family:var(--fm)"
+             oninput="validateStudentId(this)">
+    </div>
+    <button class="btn btn-accent"
+            id="btn-lookup"
+            onclick="doLookup()"
+            style="height:44px">
+      Check →
+    </button>
+  </div>
+
+  <!-- LOOKUP STATUS -->
+  <div class="lookup-status" id="ls-box">
+    <span class="ls-icon" id="ls-icon"></span>
+    <span id="ls-msg"></span>
+  </div>
+
+  <!-- FOUND STUDENT INFO -->
+  <div id="found-student-info"
+       style="display:none;margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:var(--r2);background:var(--s2);">
+    <div style="font-weight:600;font-size:14px" id="fsi-name"></div>
+    <div style="font-size:12px;color:var(--muted);font-family:var(--fm)" id="fsi-phone"></div>
+    <div style="font-size:12px;color:var(--muted);font-family:var(--fm)" id="fsi-email"></div>
+  </div>
+
+  <!-- NEW STUDENT FORM -->
+  <div class="name-field" id="new-student-fields">
+    <div class="row3" style="margin-top:14px">
+      <div class="fg0">
+        <label>Full Name (Alphabets Only)</label>
+        <input type="text"
+               id="r-name"
+               placeholder="Student name"
+               oninput="validateName(this)">
+      </div>
+
+      <div class="fg0">
+        <label>Phone (10 Digits)</label>
+        <input type="tel"
+               id="r-phone"
+               maxlength="10"
+               inputmode="numeric"
+               placeholder="9876543210"
+               oninput="validatePhone(this)">
+      </div>
+
+      <div class="fg0">
+        <label>Email</label>
+        <input type="email"
+               id="r-email"
+               placeholder="student@email.com"
+               oninput="validateEmail(this)">
+      </div>
+    </div>
+
+    <button class="btn btn-accent"
+            id="btn-confirm-details"
+            onclick="confirmNewStudent()"
+            style="margin-top:14px">
+      Confirm Details →
+    </button>
+  </div>
+
+  <!-- EVENT SELECTION -->
+  <div id="event-card" style="display:none;margin-top:24px">
+    <div class="card-head">
+      <div class="card-title">Select Events</div>
+    </div>
+
+    <!-- Event List -->
     <div class="ev-search-wrap">
-      <input type="text" id="ev-search-inp" placeholder="🔍  Search events..." oninput="filterEventList()">
+      <input type="text"
+         id="ev-search-inp"
+         placeholder="Search events..."
+         oninput="filterEventList()">
     </div>
     <div class="ev-list" id="ev-list"></div>
+
+    <!-- Selected Tags -->
     <div class="selected-events" id="selected-tags"></div>
+
+    <!-- Total Amount -->
     <div class="amt-box" id="amt-box">
-      <div><div class="amt-lbl">Total Amount to Collect</div></div>
+      <div class="amt-lbl">Total Amount</div>
       <div class="amt-val" id="amt-val">₹0</div>
     </div>
 
-    <div class="mt"><label>Payment Method</label>
-      <div class="pay-grid">
-        <div class="pay-opt" id="opt-cash" onclick="selectPay('cash')">
-          <span class="pay-icon">💵</span>
-          <div><div class="pay-lbl">Cash</div><div class="pay-sub">Collected in hand</div></div>
+    <!-- Payment Options -->
+    <div class="pay-grid" style="margin-top:14px">
+      <div class="pay-opt" id="opt-cash" onclick="selectPay('cash')">
+        <div class="pay-icon">💵</div>
+        <div>
+          <div class="pay-lbl">Cash</div>
+          <div class="pay-sub">Offline Payment</div>
         </div>
-        <div class="pay-opt" id="opt-upi" onclick="selectPay('upi')">
-          <span class="pay-icon">📱</span>
-          <div><div class="pay-lbl">UPI</div><div class="pay-sub">Online transfer</div></div>
+      </div>
+
+      <div class="pay-opt" id="opt-upi" onclick="selectPay('upi')">
+        <div class="pay-icon">📱</div>
+        <div>
+          <div class="pay-lbl">UPI</div>
+          <div class="pay-sub">Online Transfer</div>
         </div>
       </div>
     </div>
-    <div id="upi-field"><label>UPI Transaction ID</label>
-      <input type="text" id="r-txn" placeholder="e.g. 4238XXXXXX" style="font-family:var(--fm)">
+
+    <!-- UPI FIELD -->
+    <div id="upi-field" style="display:none;margin-top:14px">
+      <label>UPI Transaction ID</label>
+      <input type="text"
+             id="r-txn"
+             placeholder="Enter UPI Transaction ID"
+             style="font-family:var(--fm)"
+             oninput="validateTxn(this)">
     </div>
+
+    <!-- REGISTER BUTTON -->
     <div style="display:flex;justify-content:flex-end;margin-top:22px">
-      <button class="btn btn-green" id="reg-btn" onclick="submitReg()">Register Student →</button>
+      <button class="btn btn-green"
+              id="reg-btn"
+              onclick="submitReg()">
+        Register Student →
+      </button>
     </div>
-  </div>`;}
+  </div>
+</div>
+`}
 
 // ── LOOKUP ────────────────────────────────────────────────────
-function resetLookup(){
-  lookupState=null;
-  const ls=document.getElementById('ls-box');if(ls)ls.className='lookup-status';
-  document.getElementById('new-student-fields')?.classList.remove('show');
-  const fsi=document.getElementById('found-student-info');if(fsi)fsi.style.display='none';
-  document.getElementById('event-card')?.style&&(document.getElementById('event-card').style.display='none');
-  document.getElementById('r-sid')?.classList.remove('inp-ok','inp-err');
-  selectedEventIds.clear();
-  selPay='';
+function resetRegForm(){
+
+  const sid = document.getElementById('r-sid');
+  if(sid){
+    sid.value='';
+    sid.classList.remove('inp-ok','inp-err');
+  }
+
+  ['r-name','r-phone','r-email','r-txn'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.value='';
+      el.readOnly=false;
+      el.style.color='';
+      el.classList.remove('inp-ok','inp-err');
+    }
+  });
+
+  const search=document.getElementById('ev-search-inp');
+  if(search) search.value='';
+
+  // 🔥 IMPORTANT FIX
+  selectedEventIds = new Set();   // fully reset
+  selPay = '';
+  lookupState = null;
+
+  // reset UI blocks
+  const eventCard=document.getElementById('event-card');
+  if(eventCard) eventCard.style.display='none';
+
+  const foundInfo=document.getElementById('found-student-info');
+  if(foundInfo) foundInfo.style.display='none';
+
+  const newFields=document.getElementById('new-student-fields');
+  if(newFields) newFields.classList.remove('show');
+
+  const ls=document.getElementById('ls-box');
+  if(ls) ls.className='lookup-status';
+
   document.getElementById('opt-cash')?.classList.remove('sel');
   document.getElementById('opt-upi')?.classList.remove('sel');
-  const uf=document.getElementById('upi-field');if(uf)uf.style.display='none';
+  document.getElementById('upi-field')?.style && 
+    (document.getElementById('upi-field').style.display='none');
+
+  document.getElementById('selected-tags') &&
+    (document.getElementById('selected-tags').innerHTML='');
+
   document.getElementById('amt-box')?.classList.remove('show');
-  document.getElementById('selected-tags')&&(document.getElementById('selected-tags').innerHTML='');
+
+  loadEventsCache();
 }
 
 function showLS(type,msg){
@@ -1039,49 +1159,72 @@ function selectPay(m){
 }
 
 async function submitReg(){
-  if(!lookupState){toast('Please check the student first.','err');return;}
-  const sid=(document.getElementById('r-sid')?.value||'').trim().toUpperCase();
-  const txn=document.getElementById('r-txn')?.value.trim();
+
+  if(!lookupState){
+    return toast('Please verify the Student ID first.','err');
+  }
+
+  const sid = document.getElementById('r-sid').value.trim();
+  let txn = null;
+
+  if(selPay === 'upi'){
+    const txnInput = document.getElementById('r-txn');
+    if(!validateTxn(txnInput)){
+      return focusError('r-txn','Transaction ID must be at least 8 characters.');
+    }
+    txn = txnInput.value.trim().toUpperCase();
+  }
+
   let name,phone,email;
 
-  if(lookupState.status==='found'){
-    name =lookupState.student.name;
-    phone=lookupState.student.phone_number;
-    email=lookupState.student.email;
+  if(lookupState.status === 'found'){
+    name  = lookupState.student.name;
+    phone = lookupState.student.phone_number;
+    email = lookupState.student.email;
   } else {
-    name =document.getElementById('r-name')?.value.trim();
-    phone=document.getElementById('r-phone')?.value.trim();
-    email=document.getElementById('r-email')?.value.trim();
-    if(!name){toast('Enter the student name.','err');return;}
-    if(!phone||phone.length!==10||!/^\d+$/.test(phone)){toast('Enter a valid 10-digit phone.','err');return;}
-    if(!email||!email.includes('@')){toast('Enter a valid email.','err');return;}
+
+    if(!validateName(document.getElementById('r-name')))
+      return focusError('r-name','Name must contain only alphabets and be at least 3 characters.');
+
+    if(!validatePhone(document.getElementById('r-phone')))
+      return focusError('r-phone','Phone number must be exactly 10 digits.');
+
+    if(!validateEmail(document.getElementById('r-email')))
+      return focusError('r-email','Enter a valid email like name@example.com');
+
+    name  = document.getElementById('r-name').value.trim();
+    phone = document.getElementById('r-phone').value.trim();
+    email = document.getElementById('r-email').value.trim();
   }
-  if(selectedEventIds.size===0){toast('Select at least one event.','err');return;}
-  if(!selPay){toast('Select a payment method.','err');return;}
-  if(selPay==='upi'&&!txn){toast('Enter UPI transaction ID.','err');return;}
+
+  if(selectedEventIds.size === 0)
+    return toast('Please select at least one event.','err');
+
+  if(!selPay)
+    return toast('Select a payment method.','err');
 
   busy('reg-btn',true);
+
   try{
-    const res=await api('POST','/api/register',{
-      student_id:sid, name, phone, email,
+    const res = await api('POST','/api/register',{
+      student_id:sid,
+      name,
+      phone,
+      email,
       event_ids:Array.from(selectedEventIds),
       payment_method:selPay,
       transaction_id:txn||null
     });
-    const skipMsg = res.skipped>0 ? ` (${res.skipped} already registered, skipped)` : '';
-    toast(`✓ Registered for ${res.count} event${res.count>1?'s':''}!${skipMsg}`);
-    resetRegForm();
-  }catch(e){toast(e.message,'err');}
-  busy('reg-btn',false,'Register Student →');
-}
 
-function resetRegForm(){
-  const sid=document.getElementById('r-sid');if(sid){sid.value='';sid.classList.remove('inp-ok','inp-err');}
-  ['r-name','r-phone','r-email','r-txn'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.readOnly=false;el.style.color='';}});
-  document.getElementById('ev-search-inp')&&(document.getElementById('ev-search-inp').value='');
-  resetLookup();
-  loadEventsCache();
-}
+    toast(`✓ Successfully registered for ${res.count} event${res.count>1?'s':''}!`);
+    resetRegForm();
+
+  }catch(e){
+    toast(e.message,'err');
+  }
+
+  busy('reg-btn',false,'Register Student →');
+} 
 
 // ════════════════════════════════════════════════════════════
 //  SALES TABLE
@@ -1233,6 +1376,119 @@ async function confirmDel(){
     if(type==='student') loadStudents();
   }catch(e){toast(e.message,'err');}
   busy('btn-del',false,'Delete');
+}
+
+// ═══════════════════════════════════════════
+//  PRODUCTION VALIDATION SYSTEM
+// ═══════════════════════════════════════════
+
+function setValid(el){
+  el.classList.remove('inp-err');
+  el.classList.add('inp-ok');
+}
+
+function setInvalid(el){
+  el.classList.remove('inp-ok');
+  el.classList.add('inp-err');
+}
+
+function clearState(el){
+  el.classList.remove('inp-ok','inp-err');
+}
+
+function validateStudentId(el){
+  el.value = el.value.replace(/\D/g,'');
+  if(el.value.length > 15) el.value = el.value.slice(0,15);
+
+  if(!el.value){
+    clearState(el);
+    return false;
+  }
+
+  if(el.value.length < 5){
+    setInvalid(el);
+    return false;
+  }
+
+  setValid(el);
+  return true;
+}
+
+function validateName(el){
+  el.value = el.value.replace(/[^a-zA-Z\s]/g,'');
+
+  if(!el.value){
+    clearState(el);
+    return false;
+  }
+
+  if(el.value.trim().length < 3){
+    setInvalid(el);
+    return false;
+  }
+
+  setValid(el);
+  return true;
+}
+
+function validatePhone(el){
+  el.value = el.value.replace(/\D/g,'');
+
+  if(!el.value){
+    clearState(el);
+    return false;
+  }
+
+  if(el.value.length !== 10){
+    setInvalid(el);
+    return false;
+  }
+
+  setValid(el);
+  return true;
+}
+
+function validateEmail(el){
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if(!el.value){
+    clearState(el);
+    return false;
+  }
+
+  if(!regex.test(el.value)){
+    setInvalid(el);
+    return false;
+  }
+
+  setValid(el);
+  return true;
+}
+
+function validateTxn(el){
+  el.value = el.value.replace(/[^a-zA-Z0-9]/g,'');
+
+  if(!el.value){
+    clearState(el);
+    return false;
+  }
+
+  if(el.value.length < 8){
+    setInvalid(el);
+    return false;
+  }
+
+  setValid(el);
+  return true;
+}
+
+function focusError(id,msg){
+  const el=document.getElementById(id);
+  if(el){
+    setInvalid(el);
+    el.focus();
+  }
+  toast(msg,'err');
 }
 </script>
 </body>

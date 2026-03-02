@@ -269,10 +269,13 @@ app.delete('/api/students/:id', requireAuth, requireAdmin, async (req, res) => {
 
 app.get('/api/sales', requireAuth, async (req, res) => {
   let query = db.from('Registrations')
-    .select(`id, payment_method, transaction_id, amount_paid, registered_at,
-      Students ( id, student_id, name, phone_number, email ),
-      Events   ( id, title, cost ),
-      Members  ( id, name, phone_number )`)
+    .select(`
+      id, payment_method, amount_paid, registered_at,
+      Students ( id, student_id, name ),
+      Events ( id, title ),
+      Members ( id, name ),
+      Payments ( transaction_id )
+    `)
     .order('registered_at', { ascending: false });
   if (req.user.role !== 'admin') query = query.eq('member_id', req.user.id);
   const { data, error } = await query;
@@ -286,43 +289,56 @@ app.post('/api/register', requireAuth, async (req, res) => {
 
   if (!student_id || !name || !phone || !email || !event_ids?.length || !payment_method)
     return res.status(400).json({ error: 'Missing required fields.' });
-  if (!isPhone(phone))  return res.status(400).json({ error: 'Phone must be 10 digits.' });
-  if (!isEmail(email))  return res.status(400).json({ error: 'Invalid email.' });
+
+  if (!isPhone(phone)) return res.status(400).json({ error: 'Phone must be 10 digits.' });
+  if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
   if (!Array.isArray(event_ids) || event_ids.some(id => !isUUID(id)))
     return res.status(400).json({ error: 'Invalid event selection.' });
+
   if (!['cash','upi'].includes(payment_method))
     return res.status(400).json({ error: 'Invalid payment method.' });
+
   if (payment_method === 'upi' && !transaction_id)
     return res.status(400).json({ error: 'UPI transaction ID required.' });
 
+  const cleanStudId = sanitize(student_id).toUpperCase();
   const cleanName   = sanitize(name);
   const cleanEmail  = sanitize(email).toLowerCase();
-  const cleanStudId = sanitize(student_id).toUpperCase();
   const cleanTxn    = payment_method === 'upi' ? sanitize(transaction_id) : null;
-
-  const { data: eventsData } = await db
-    .from('Events')
-    .select('id, cost')
-    .in('id', event_ids);
-
-  if (!eventsData?.length)
-    return res.status(400).json({ error: 'One or more events not found.' });
 
   // ───── UPSERT STUDENT ─────
   let studentDbId;
-  const { data: existing } = await db.from('Students')
+
+  const { data: existing } = await db
+    .from('Students')
     .select('id')
     .eq('student_id', cleanStudId)
     .maybeSingle();
 
   if (existing) {
     studentDbId = existing.id;
-    await db.from('Students')
-      .update({ name: cleanName, email: cleanEmail, phone_number: String(phone) })
+
+    const { error: stuUpdateErr } = await db
+      .from('Students')
+      .update({
+        name: cleanName,
+        email: cleanEmail,
+        phone_number: String(phone)
+      })
       .eq('id', studentDbId);
+
+    if (stuUpdateErr)
+      return res.status(400).json({ error: stuUpdateErr.message });
+
   } else {
-    const { data: newStu, error: stuErr } = await db.from('Students')
-      .insert({ student_id: cleanStudId, name: cleanName, email: cleanEmail, phone_number: String(phone) })
+    const { data: newStu, error: stuErr } = await db
+      .from('Students')
+      .insert({
+        student_id: cleanStudId,
+        name: cleanName,
+        email: cleanEmail,
+        phone_number: String(phone)
+      })
       .select()
       .single();
 
@@ -332,49 +348,21 @@ app.post('/api/register', requireAuth, async (req, res) => {
     studentDbId = newStu.id;
   }
 
-  // ───── TRANSACTION VALIDATION ─────
-  if (cleanTxn) {
-    const { data: existingTxn } = await db
-      .from('Registrations')
-      .select('student_id')
-      .eq('transaction_id', cleanTxn)
-      .limit(1);
+  // ───── CALL TRANSACTIONAL RPC ─────
+  const { error: rpcErr } = await db.rpc('register_student_with_payment', {
+    p_student_uuid: studentDbId,
+    p_member_uuid: req.user.id,
+    p_event_ids: event_ids,
+    p_payment_method: payment_method,
+    p_transaction_id: cleanTxn
+  });
 
-    if (existingTxn.length > 0 && existingTxn[0].student_id !== studentDbId) {
-      return res.status(400).json({
-        error: 'This transaction ID is already used by another student.'
-      });
-    }
+  if (rpcErr) {
+    if (rpcErr.code === '23505')
+      return res.status(400).json({ error: 'Duplicate event or transaction ID.' });
+
+    return res.status(500).json({ error: rpcErr.message });
   }
-
-  // ───── FILTER ALREADY REGISTERED EVENTS ─────
-  const { data: existingRegs } = await db
-    .from('Registrations')
-    .select('event_id')
-    .eq('student_id', studentDbId)
-    .in('event_id', event_ids);
-
-  const alreadyRegistered = new Set((existingRegs || []).map(r => r.event_id));
-  const newEventIds = event_ids.filter(eid => !alreadyRegistered.has(eid));
-
-  if (newEventIds.length === 0)
-    return res.status(400).json({ error: 'Student already registered for selected events.' });
-
-  const eventMap = Object.fromEntries(eventsData.map(e => [e.id, e.cost]));
-
-  const registrations = newEventIds.map(eid => ({
-    student_id:     studentDbId,
-    event_id:       eid,
-    member_id:      req.user.id,
-    payment_method,
-    transaction_id: cleanTxn,
-    amount_paid:    eventMap[eid]
-  }));
-
-  const { error: regErr } = await db.from('Registrations').insert(registrations);
-
-  if (regErr)
-    return res.status(500).json({ error: regErr.message });
 
   res.json({ ok: true });
 });
@@ -382,62 +370,128 @@ app.post('/api/register', requireAuth, async (req, res) => {
 app.put('/api/sales/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   const { student_id, name, phone, email, event_id, payment_method, transaction_id } = req.body;
-  if (!isUUID(id)||!isUUID(String(student_id))||!isUUID(String(event_id)))
+
+  if (!isUUID(id) || !isUUID(String(student_id)) || !isUUID(String(event_id)))
     return res.status(400).json({ error: 'Invalid IDs.' });
-  if (!name||!phone||!email||!payment_method) return res.status(400).json({ error: 'Missing fields.' });
+
+  if (!name || !phone || !email || !payment_method)
+    return res.status(400).json({ error: 'Missing fields.' });
+
   if (!isPhone(phone)) return res.status(400).json({ error: 'Phone must be 10 digits.' });
   if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
-  if (!['cash','upi'].includes(payment_method)) return res.status(400).json({ error: 'Invalid payment method.' });
-  if (payment_method==='upi' && !transaction_id) return res.status(400).json({ error: 'UPI transaction ID required.' });
 
-  const { data: check } = await db.from('Registrations').select('member_id').eq('id', id).single();
-  if (!check) return res.status(404).json({ error: 'Not found.' });
-  if (req.user.role !== 'admin' && check.member_id !== req.user.id)
+  if (!['cash','upi'].includes(payment_method))
+    return res.status(400).json({ error: 'Invalid payment method.' });
+
+  const { data: reg } = await db
+    .from('Registrations')
+    .select('member_id, payment_id')
+    .eq('id', id)
+    .single();
+
+  if (!reg) return res.status(404).json({ error: 'Not found.' });
+
+  if (req.user.role !== 'admin' && reg.member_id !== req.user.id)
     return res.status(403).json({ error: 'Not authorized.' });
 
-  const { data: evData } = await db.from('Events').select('cost').eq('id', event_id).single();
+  const { data: evData } = await db
+    .from('Events')
+    .select('cost')
+    .eq('id', event_id)
+    .single();
+
   if (!evData) return res.status(400).json({ error: 'Event not found.' });
 
-  // Validate transaction when editing
+  // Update student
+  await db.from('Students').update({
+    name: sanitize(name),
+    phone_number: String(phone),
+    email: sanitize(email).toLowerCase()
+  }).eq('id', student_id);
+
+  // Update payment (transaction lives here now)
   if (payment_method === 'upi') {
     const cleanTxn = sanitize(transaction_id);
 
-    const { data: existingTxn } = await db
-      .from('Registrations')
-      .select('student_id')
-      .eq('transaction_id', cleanTxn)
-      .neq('id', id)
-      .limit(1);
+    const { error: payErr } = await db
+      .from('Payments')
+      .update({
+        transaction_id: cleanTxn,
+        payment_method
+      })
+      .eq('id', reg.payment_id);
 
-    if (existingTxn.length > 0 && existingTxn[0].student_id !== student_id) {
-      return res.status(400).json({
-        error: 'This transaction ID is already used by another student.'
-      });
+    if (payErr) {
+      if (payErr.code === '23505')
+        return res.status(400).json({ error: 'Transaction ID already used.' });
+      return res.status(500).json({ error: payErr.message });
     }
+  } else {
+    await db
+      .from('Payments')
+      .update({
+        transaction_id: null,
+        payment_method
+      })
+      .eq('id', reg.payment_id);
   }
 
-  await db.from('Students').update({
-    name: sanitize(name), phone_number: String(phone), email: sanitize(email).toLowerCase()
-  }).eq('id', student_id);
+  // Update registration event
+  const { error } = await db
+    .from('Registrations')
+    .update({
+      event_id,
+      payment_method,
+      amount_paid: evData.cost
+    })
+    .eq('id', id);
 
-  const { error } = await db.from('Registrations').update({
-    event_id, payment_method,
-    transaction_id: payment_method==='upi' ? sanitize(transaction_id) : null,
-    amount_paid: evData.cost
-  }).eq('id', id);
   if (error) return res.status(500).json({ error: error.message });
+
   res.json({ ok: true });
 });
 
 app.delete('/api/sales/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
-  if (!isUUID(id)) return res.status(400).json({ error: 'Invalid ID.' });
-  const { data: check } = await db.from('Registrations').select('member_id').eq('id', id).single();
-  if (!check) return res.status(404).json({ error: 'Not found.' });
-  if (req.user.role !== 'admin' && check.member_id !== req.user.id)
+
+  if (!isUUID(id))
+    return res.status(400).json({ error: 'Invalid ID.' });
+
+  // Get registration first
+  const { data: reg } = await db
+    .from('Registrations')
+    .select('member_id, payment_id')
+    .eq('id', id)
+    .single();
+
+  if (!reg)
+    return res.status(404).json({ error: 'Not found.' });
+
+  if (req.user.role !== 'admin' && reg.member_id !== req.user.id)
     return res.status(403).json({ error: 'Not authorized.' });
-  const { error } = await db.from('Registrations').delete().eq('id', id);
-  if (error) return res.status(500).json({ error: error.message });
+
+  // Delete registration
+  const { error: delErr } = await db
+    .from('Registrations')
+    .delete()
+    .eq('id', id);
+
+  if (delErr)
+    return res.status(500).json({ error: delErr.message });
+
+  // Check if any registrations still use this payment
+  const { count } = await db
+    .from('Registrations')
+    .select('*', { count: 'exact', head: true })
+    .eq('payment_id', reg.payment_id);
+
+  if (count === 0) {
+    await db
+      .from('Payments')
+      .delete()
+      .eq('id', reg.payment_id);
+  }
+
   res.json({ ok: true });
 });
 
