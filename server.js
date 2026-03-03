@@ -375,45 +375,77 @@ app.put('/api/sales/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   const { student_id, name, phone, email, event_id, payment_method, transaction_id } = req.body;
 
+  // ───────── Basic Validation ─────────
   if (!isUUID(id) || !isUUID(String(student_id)) || !isUUID(String(event_id)))
     return res.status(400).json({ error: 'Invalid IDs.' });
 
   if (!name || !phone || !email || !payment_method)
     return res.status(400).json({ error: 'Missing fields.' });
 
-  if (!isPhone(phone)) return res.status(400).json({ error: 'Phone must be 10 digits.' });
-  if (!isEmail(email)) return res.status(400).json({ error: 'Invalid email.' });
+  if (!isPhone(phone))
+    return res.status(400).json({ error: 'Phone must be 10 digits.' });
 
-  if (!['cash','upi'].includes(payment_method))
+  if (!isEmail(email))
+    return res.status(400).json({ error: 'Invalid email.' });
+
+  if (!['cash', 'upi'].includes(payment_method))
     return res.status(400).json({ error: 'Invalid payment method.' });
 
+  if (payment_method === 'upi' && !transaction_id)
+    return res.status(400).json({ error: 'UPI transaction ID required.' });
+
+  // ───────── Fetch Existing Registration ─────────
   const { data: reg } = await db
     .from('Registrations')
     .select('member_id, payment_id')
     .eq('id', id)
     .single();
 
-  if (!reg) return res.status(404).json({ error: 'Not found.' });
+  if (!reg)
+    return res.status(404).json({ error: 'Registration not found.' });
 
   if (req.user.role !== 'admin' && reg.member_id !== req.user.id)
     return res.status(403).json({ error: 'Not authorized.' });
 
+  // ───────── Prevent Duplicate Event BEFORE Updating ─────────
+  const { data: duplicate } = await db
+    .from('Registrations')
+    .select('id')
+    .eq('student_id', student_id)
+    .eq('event_id', event_id)
+    .neq('id', id)
+    .maybeSingle();
+
+  if (duplicate) {
+    return res.status(400).json({
+      error: 'This student is already registered for the selected event.'
+    });
+  }
+
+  // ───────── Get Event Cost ─────────
   const { data: evData } = await db
     .from('Events')
     .select('cost')
     .eq('id', event_id)
     .single();
 
-  if (!evData) return res.status(400).json({ error: 'Event not found.' });
+  if (!evData)
+    return res.status(400).json({ error: 'Event not found.' });
 
-  // Update student
-  await db.from('Students').update({
-    name: sanitize(name),
-    phone_number: String(phone),
-    email: sanitize(email).toLowerCase()
-  }).eq('id', student_id);
+  // ───────── Update Student ─────────
+  const { error: stuErr } = await db
+    .from('Students')
+    .update({
+      name: sanitize(name),
+      phone_number: String(phone),
+      email: sanitize(email).toLowerCase()
+    })
+    .eq('id', student_id);
 
-  // Update payment (transaction lives here now)
+  if (stuErr)
+    return res.status(500).json({ error: stuErr.message });
+
+  // ───────── Update Payment ─────────
   if (payment_method === 'upi') {
     const cleanTxn = sanitize(transaction_id);
 
@@ -428,19 +460,23 @@ app.put('/api/sales/:id', requireAuth, async (req, res) => {
     if (payErr) {
       if (payErr.code === '23505')
         return res.status(400).json({ error: 'Transaction ID already used.' });
+
       return res.status(500).json({ error: payErr.message });
     }
   } else {
-    await db
+    const { error: payErr } = await db
       .from('Payments')
       .update({
         transaction_id: null,
         payment_method
       })
       .eq('id', reg.payment_id);
+
+    if (payErr)
+      return res.status(500).json({ error: payErr.message });
   }
 
-  // Update registration event
+  // ───────── Update Registration ─────────
   const { error } = await db
     .from('Registrations')
     .update({
@@ -450,7 +486,8 @@ app.put('/api/sales/:id', requireAuth, async (req, res) => {
     })
     .eq('id', id);
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error)
+    return res.status(500).json({ error: error.message });
 
   res.json({ ok: true });
 });
