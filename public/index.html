@@ -1270,56 +1270,142 @@ function filterSales(){
   const c=document.getElementById('sales-count');if(c)c.textContent=data.length;
   renderSales(data);
 }
+
 function renderSales(data){
-  const tbody=document.getElementById('sales-body');if(!tbody)return;
-  const isAdmin=session.role==='admin';const cols=isAdmin?7:6;
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="${cols}"><div class="empty"><div class="ei">📋</div><p>No registrations found.</p></div></td></tr>`;return;}
-  const rows=data.map(r=>{
-    const tr=document.createElement('tr');
-    const pc=r.payment_method==='cash'?'pill-cash':'pill-upi';
-    const pt=r.payment_method==='cash'?'💵 Cash':'📱 UPI';
-    const memCol=isAdmin?'<td class="mn" style="color:var(--muted)"></td>':'';
-    tr.innerHTML=`
-      <td><div style="font-weight:600" class="sn"></div>
-          <div style="font-size:11px;color:var(--accent-h);font-family:var(--fm)" class="ssid"></div>
-          <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:1px" class="sp"></div></td>
+  const tbody = document.getElementById('sales-body');
+  if(!tbody) return;
+
+  const isAdmin = session.role === 'admin';
+  const cols = isAdmin ? 7 : 6;
+
+  if(!data.length){
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="${cols}">
+          <div class="empty">
+            <div class="ei">📋</div>
+            <p>No registrations found.</p>
+          </div>
+        </td>
+      </tr>`;
+    return;
+  }
+
+  const rows = data.map(r => {
+
+    const tr = document.createElement('tr');
+
+    // ✅ SAFE PAYMENT EXTRACTION (supports both old + new structure)
+    const payMethod = r.Payments?.payment_method || r.payment_method;
+    const txnId     = r.Payments?.transaction_id || null;
+
+    const pc = payMethod === 'cash' ? 'pill-cash' : 'pill-upi';
+    const pt = payMethod === 'cash' ? '💵 Cash' : '📱 UPI';
+
+    const memCol = isAdmin
+      ? '<td class="mn" style="color:var(--muted)"></td>'
+      : '';
+
+    tr.innerHTML = `
+      <td>
+        <div style="font-weight:600" class="sn"></div>
+        <div style="font-size:11px;color:var(--accent-h);font-family:var(--fm)" class="ssid"></div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--fm);margin-top:1px" class="sp"></div>
+      </td>
+
       <td style="font-weight:500" class="et"></td>
+
       ${memCol}
-      <td style="font-family:var(--fm);font-weight:500">${fmtMoney(r.amount_paid)}</td>
-      <td><span class="pill ${pc}">${pt}</span>${r.transaction_id?'<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>':''}</td>
-      <td style="color:var(--muted);font-size:12px">${fmtDateTime(r.registered_at)}</td>
-      <td><div class="acts">
-        <button class="btn btn-blue" data-action="edit">Edit</button>
-        <button class="btn btn-red" data-action="del">Delete</button>
-      </div></td>`;
-    tr.querySelector('.sn').textContent=r.Students.name;
-    tr.querySelector('.ssid').textContent=r.Students.student_id||'';
-    tr.querySelector('.sp').textContent=r.Students.phone_number;
-    tr.querySelector('.et').textContent=r.Events.title;
-    if(isAdmin&&r.Members)tr.querySelector('.mn').textContent=r.Members.name;
-    if(r.transaction_id)tr.querySelector('.txn').textContent=r.transaction_id;
-    tr.querySelector('[data-action="edit"]').addEventListener('click',()=>openEditReg(salesCache[r.id]));
-    tr.querySelector('[data-action="del"]').addEventListener('click',()=>openDel(r.id,'registration','registration for "'+r.Students.name+'"'));
+
+      <td style="font-family:var(--fm);font-weight:500">
+        ${fmtMoney(r.amount_paid)}
+      </td>
+
+      <td>
+        <span class="pill ${pc}">${pt}</span>
+        ${txnId ? `
+          <div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:3px" class="txn"></div>
+        ` : ''}
+      </td>
+
+      <td style="color:var(--muted);font-size:12px">
+        ${fmtDateTime(r.registered_at)}
+      </td>
+
+      <td>
+        <div class="acts">
+          <button class="btn btn-blue" data-action="edit">Edit</button>
+          <button class="btn btn-red" data-action="del">Delete</button>
+        </div>
+      </td>
+    `;
+
+    // Student info
+    tr.querySelector('.sn').textContent   = r.Students?.name || '';
+    tr.querySelector('.ssid').textContent = r.Students?.student_id || '';
+    tr.querySelector('.sp').textContent   = r.Students?.phone_number || '';
+    tr.querySelector('.et').textContent   = r.Events?.title || '';
+
+    // Member (admin only)
+    if(isAdmin && r.Members){
+      tr.querySelector('.mn').textContent = r.Members.name;
+    }
+
+    // Transaction ID (if exists)
+    if(txnId){
+      tr.querySelector('.txn').textContent = txnId;
+    }
+
+    // Actions
+    tr.querySelector('[data-action="edit"]')
+      .addEventListener('click', () => openEditReg(salesCache[r.id]));
+
+    tr.querySelector('[data-action="del"]')
+      .addEventListener('click', () =>
+        openDel(r.id, 'registration', 'registration for "' + r.Students?.name + '"')
+      );
+
     return tr;
   });
-  tbody.innerHTML='';rows.forEach(tr=>tbody.appendChild(tr));
+
+  tbody.innerHTML = '';
+  rows.forEach(tr => tbody.appendChild(tr));
 }
 
 // ════════════════════════════════════════════════════════════
 //  EDIT REGISTRATION
 // ════════════════════════════════════════════════════════════
 function openEditReg(r){
-  document.getElementById('me-id').value=r.id;
-  document.getElementById('me-stu-id').value=r.Students.id;
-  document.getElementById('me-name').value=r.Students.name;
-  document.getElementById('me-phone').value=r.Students.phone_number;
-  document.getElementById('me-email').value=r.Students.email;
-  document.getElementById('me-pay').value=r.payment_method;
-  document.getElementById('me-txn').value=r.transaction_id||'';
-  document.getElementById('me-sub').textContent='Editing registration for '+r.Students.name;
+
+  document.getElementById('me-id').value = r.id;
+  document.getElementById('me-stu-id').value = r.Students?.id || '';
+
+  document.getElementById('me-name').value  = r.Students?.name || '';
+  document.getElementById('me-phone').value = r.Students?.phone_number || '';
+  document.getElementById('me-email').value = r.Students?.email || '';
+
+  // ✅ FIXED: safely read from Payments table
+  const payMethod = r.Payments?.payment_method || r.payment_method;
+  const txnId     = r.Payments?.transaction_id || null;
+
+  document.getElementById('me-pay').value = payMethod || 'cash';
+  document.getElementById('me-txn').value = txnId || '';
+
+  document.getElementById('me-sub').textContent =
+    'Editing registration for ' + (r.Students?.name || '');
+
   buildEditEventDropdown();
-  const msel=document.getElementById('me-event');
-  for(let i=0;i<msel.options.length;i++){if(msel.options[i].value===r.Events.id){msel.selectedIndex=i;break;}}
+
+  const msel = document.getElementById('me-event');
+  if(msel && r.Events){
+    for(let i=0;i<msel.options.length;i++){
+      if(msel.options[i].value === r.Events.id){
+        msel.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
   toggleEditUPI();
   openM('m-edit');
 }
