@@ -271,15 +271,19 @@ app.get('/api/sales', requireAuth, async (req, res) => {
   let query = db.from('Registrations')
     .select(`
       id, payment_method, amount_paid, registered_at,
-      Students ( id, student_id, name ),
+      Students ( id, student_id, name, phone_number, email ),
       Events ( id, title ),
       Members ( id, name ),
-      Payments ( transaction_id )
+      Payments ( transaction_id, payment_method )
     `)
     .order('registered_at', { ascending: false });
-  if (req.user.role !== 'admin') query = query.eq('member_id', req.user.id);
+
+  if (req.user.role !== 'admin')
+    query = query.eq('member_id', req.user.id);
+
   const { data, error } = await query;
   if (error) return res.status(500).json({ error: 'Failed to load sales.' });
+
   res.json(data);
 });
 
